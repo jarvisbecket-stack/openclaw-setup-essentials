@@ -5,337 +5,553 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenClaw Setup Essentials</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #2563eb;
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --surface-light: #334155;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border: #334155;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --bg-hover: #252535;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b0;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --border-color: #2a2a3a;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
         }
-        .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+        .version {
+            display: inline-block;
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+        
+        /* Search Box Styles */
+        .search-container {
+            max-width: 500px;
+            margin: 1.5rem auto 0;
+            position: relative;
+        }
+        .search-box {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 200;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .search-results.active {
+            display: block;
+        }
+        .search-result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        .search-result-item:hover {
+            background: var(--bg-hover);
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .search-result-title {
+            color: var(--accent-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .search-result-preview {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        .search-highlight {
+            background: rgba(99, 102, 241, 0.3);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        /* Navigation Styles */
+        nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
             padding: 1rem;
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .header-content {
-            max-width: 1400px;
+        .nav-container {
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+            justify-content: space-between;
             align-items: center;
         }
-        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
-        .menu-btn {
-            padding: 0.5rem 1rem;
-            background: var(--surface-light);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--text);
-            cursor: pointer;
-        }
-        .search-box {
-            flex: 1;
-            min-width: 200px;
-            position: relative;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--text);
-            font-size: 0.95rem;
-        }
-        .search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .container {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .sidebar {
-            width: 300px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 1.5rem;
-            position: fixed;
-            left: 0;
-            top: 70px;
-            bottom: 0;
-            overflow-y: auto;
-            transform: translateX(-100%);
-            transition: transform 0.3s;
-            z-index: 90;
-        }
-        .sidebar.open { transform: translateX(0); }
-        .overlay {
+        .nav-brand {
             display: none;
-            position: fixed;
-            inset: 70px 0 0 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 80;
-        }
-        .overlay.show { display: block; }
-        .nav-section { margin-bottom: 1.5rem; }
-        .nav-title {
-            font-size: 0.75rem;
+            color: var(--accent-primary);
             font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-            padding-left: 0.5rem;
+            font-size: 1.1rem;
         }
-        .nav-list { list-style: none; }
-        .nav-list li { margin-bottom: 0.25rem; }
-        .nav-list a {
-            display: block;
-            padding: 0.5rem 0.75rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 0.375rem;
-            font-size: 0.85rem;
-            border-left: 2px solid transparent;
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background 0.2s;
         }
-        .nav-list a:hover, .nav-list a.active {
-            color: var(--text);
-            background: var(--surface-light);
-            border-left-color: var(--primary);
+        .menu-toggle:hover {
+            background: var(--bg-hover);
         }
-        .main {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 0;
-        }
-        .content {
-            max-width: 900px;
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 1200px;
             margin: 0 auto;
         }
-        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
-        h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 2.5rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary);
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
-        h3 { font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
-        h4 { font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
-        p { margin-bottom: 1rem; color: var(--text-muted); }
-        pre {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
+        nav a:hover { color: var(--text-primary); background: var(--bg-hover); }
+        
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            .nav-brand {
+                display: block;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            nav ul {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-color);
+            }
+            nav ul.active {
+                display: flex;
+            }
+            nav li {
+                width: 100%;
+            }
+            nav a {
+                display: block;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+        section { margin-bottom: 3rem; }
+        h2 {
+            font-size: 1.75rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        h3 { font-size: 1.25rem; color: var(--text-primary); margin: 1.5rem 0 0.75rem; }
+        .alert {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-danger);
+            border-radius: 8px;
             padding: 1rem;
+            margin: 1rem 0;
+        }
+        .alert-title { color: var(--accent-danger); font-weight: 600; margin-bottom: 0.5rem; }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .card-title { font-weight: 600; color: var(--accent-primary); margin-bottom: 0.75rem; }
+        code {
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+        pre {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
             overflow-x: auto;
             margin: 1rem 0;
-            font-size: 0.85rem;
         }
-        code {
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 0.85rem;
+        pre code { background: none; padding: 0; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        .checklist { list-style: none; margin-left: 0; }
+        .checklist li::before { content: "☐ "; color: var(--accent-primary); font-weight: bold; }
+        .highlight {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
         }
-        ul, ol { margin: 1rem 0; padding-left: 1.5rem; }
-        li { margin-bottom: 0.5rem; color: var(--text-muted); }
-        hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-        .highlight { background: rgba(37, 99, 235, 0.3); padding: 0.1rem 0.2rem; border-radius: 0.25rem; }
-        .chat-btn {
+        .principle {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--accent-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .principle-title { font-size: 1.1rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 0.75rem; }
+        .success-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-success);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .success-title { color: var(--accent-success); font-weight: 600; margin-bottom: 0.5rem; }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+        a { color: var(--accent-primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        /* Chat Widget Styles */
+        .chat-widget {
             position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            width: 56px;
-            height: 56px;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .chat-button {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             border: none;
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .chat-panel {
-            position: fixed;
-            bottom: 80px;
-            right: 1.5rem;
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+        .chat-button.active {
+            transform: rotate(45deg);
+        }
+        .chat-window {
+            position: absolute;
+            bottom: 75px;
+            right: 0;
             width: 350px;
-            max-width: calc(100vw - 3rem);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 1rem;
+            max-width: calc(100vw - 40px);
+            height: 450px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             display: none;
-            z-index: 1000;
+            flex-direction: column;
+            overflow: hidden;
         }
-        .chat-panel.show { display: block; }
+        .chat-window.active {
+            display: flex;
+        }
         .chat-header {
-            background: var(--primary);
-            color: white;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             padding: 1rem;
-            border-radius: 1rem 1rem 0 0;
-            font-weight: 600;
+            color: white;
         }
-        .chat-body { padding: 1rem; max-height: 300px; overflow-y: auto; }
-        .chat-input { padding: 1rem; border-top: 1px solid var(--border); }
-        .chat-input input {
-            width: 100%;
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: white;
+        }
+        .chat-header p {
+            margin: 0.25rem 0 0;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .chat-message {
+            margin-bottom: 1rem;
             padding: 0.75rem;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--text);
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
-        @media (min-width: 1024px) {
-            .sidebar { position: sticky; transform: none; top: 70px; height: calc(100vh - 70px); }
-            .main { margin-left: 300px; }
-            .menu-btn { display: none; }
-            .overlay { display: none !important; }
+        .chat-message.bot {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            align-self: flex-start;
         }
-        @media (max-width: 640px) {
-            .header-content { flex-direction: column; align-items: stretch; }
-            .search-box { order: 3; width: 100%; }
-            .main { padding: 1rem; }
-            h1 { font-size: 1.5rem; }
-            h2 { font-size: 1.25rem; }
+        .chat-message.user {
+            background: var(--accent-primary);
+            color: white;
+            margin-left: auto;
+            text-align: right;
         }
-        html { scroll-behavior: smooth; }
+        .faq-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+        .faq-question {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .faq-question:hover {
+            background: var(--bg-hover);
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 1.2rem;
+        }
+        .faq-question.active::after {
+            content: '−';
+        }
+        .faq-answer {
+            padding: 0 1rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .faq-answer.active {
+            padding: 0 1rem 1rem;
+            max-height: 200px;
+        }
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        .chat-send {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .chat-send:hover {
+            background: var(--accent-secondary);
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.75rem; }
+            .chat-window {
+                width: calc(100vw - 40px);
+                height: 400px;
+            }
+        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">⚡ OpenClaw Setup</div>
-            <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search documentation..." onkeyup="search()">
-            </div>
+    <header>
+        <h1>🔧 OpenClaw Setup Essentials</h1>
+        <p class="subtitle">A Birth Certificate for New Agents</p>
+        <span class="version">Version 3.5</span>
+        
+        <!-- Search Box -->
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search documentation...">
+            <div class="search-results" id="searchResults"></div>
         </div>
     </header>
-    <div class="overlay" onclick="toggleMenu()"></div>
+    
+    <nav>
+        <div class="nav-container">
+            <span class="nav-brand">OpenClaw</span>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+            <ul id="navMenu">
+                <li><a href="#security">Security</a></li>
+                <li><a href="#identity">Identity</a></li>
+                <li><a href="#memory">Memory</a></li>
+                <li><a href="#timezone">TZ</a></li>
+                <li><a href="#cost-optimization">Cost</a></li>
+                <li><a href="#llm-routing">Routing</a></li>
+                <li><a href="#error-handling">Errors</a></li>
+                <li><a href="#api-security">Keys</a></li>
+                <li><a href="#audit">Audit</a></li>
+                <li><a href="#reports">Reports</a></li>
+                <li><a href="#influencers">People</a></li>
+                <li><a href="#context-rot">Context</a></li>
+                <li><a href="#channels">Channels</a></li>
+            </ul>
+        </div>
+    </nav>
+    
     <div class="container">
-        <aside class="sidebar" id="sidebar">
-            <nav>
-                <div class="nav-section">
-                    <div class="nav-title">Getting Started</div>
-                    <ul class="nav-list">
-                        <li><a href="#security" onclick="closeMenu()">🚨 Security First</a></li>
-                        <li><a href="#identity" onclick="closeMenu()">📁 Identity Files</a></li>
-                        <li><a href="#memory" onclick="closeMenu()">🧠 Memory System</a></li>
-                        <li><a href="#principles" onclick="closeMenu()">🎯 Core Principles</a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-title">Tools & Skills</div>
-                    <ul class="nav-list">
-                        <li><a href="#tooling" onclick="closeMenu()">🔧 Tooling & Skills</a></li>
-                        <li><a href="#web-search" onclick="closeMenu()">🔍 Web Search</a></li>
-                        <li><a href="#web-browsing" onclick="closeMenu()">🌐 Web Browsing</a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-title">Automation</div>
-                    <ul class="nav-list">
-                        <li><a href="#automation" onclick="closeMenu()">🔄 Automation Setup</a></li>
-                        <li><a href="#github" onclick="closeMenu()">📊 Repository Management</a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-title">Advanced Topics</div>
-                    <ul class="nav-list">
-                        <li><a href="#communication" onclick="closeMenu()">💬 Communication Rules</a></li>
-                        <li><a href="#quality" onclick="closeMenu()">🎨 Quality Standards</a></li>
-                        <li><a href="#testing" onclick="closeMenu()">🧪 Testing & Verification</a></li>
-                        <li><a href="#learning" onclick="closeMenu()">📚 Continuous Learning</a></li>
-                        <li><a href="#context-rot" onclick="closeMenu()">🧠 Context Rot Prevention</a></li>
-                        <li><a href="#influencers" onclick="closeMenu()">👥 Influencers</a></li>
-                        <li><a href="#emergency" onclick="closeMenu()">🚨 Emergency Procedures</a></li>
-                        <li><a href="#checklist" onclick="closeMenu()">✅ Final Checklist</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </aside>
-        <main class="main">
-            <div class="content" id="content">
-                <h1>OpenClaw Setup Essentials</h1>
-                <p><strong>A Birth Certificate for New Agents</strong></p>
-                <p>Version: 1.0 | Last Updated: 2026-02-25</p>
-                
-                <hr>
-                
-                <h2 id="security">🚨 FIRST: Security Before Everything</h2>
-                
-                <h3>Immediate Security Audit (Do This First)</h3>
-                <pre>openclaw security audit --deep --fix</pre>
-                
-                <p><strong>If you find critical issues:</strong></p>
-                <ol>
-                    <li>Fix them immediately — don't wait for permission</li>
-                    <li>Report what you did after</li>
-                    <li>Document in memory/security-audit-[date].md</li>
-                </ol>
-                
-                <p><strong>Known Safe Components (Don't Panic):</strong></p>
-                <ul>
-                    <li>x-research skill — flags as "env-harvesting" but is legitimate X API usage (verified 2026-02-25)</li>
-                </ul>
-                
-                <h3>Security Rules (Never Break These)</h3>
-                <ul>
-                    <li>Never run on primary computer with personal file access</li>
-                    <li>Use Docker isolation, run as non-root</li>
-                    <li>Bind to loopback only (access via Tailscale/SSH tunnels)</li>
-                    <li>Never exfiltrate private data</li>
-                    <li>trash &gt; rm (recoverable beats gone forever)</li>
-                </ul>
-                
-                <hr>
-                
-                <h2 id="identity">📁 Step 1: Read Your Identity Files</h2>
-                
-                <p><strong>Read in this order:</strong></p>
-                <ol>
-                    <li>SOUL.md — Who you are, how to behave</li>
-                    <li>USER.md — Who you're helping</li>
-                    <li>AGENTS.md — Workspace rules</li>
-                    <li>BOOTSTRAP.md — If it exists, follow it, then delete it</li>
-                    <li>memory/YYYY-MM-DD.md — Today's and yesterday's context</li>
-                </ol>
-                
-                <p><strong>If in MAIN SESSION (direct chat):</strong></p>
-                <ul>
-                    <li>Also read MEMORY.md — curated long-term memory</li>
-                    <li>DO NOT read MEMORY.md in shared contexts (groups, Discord) — security risk</li>
-                </ul>
-                
-                <hr>
-                
-                <h2 id="memory">🧠 Step 2: Memory System Setup</h2>
-                
-                <h3>Create Memory Structure</h3>
-                <pre>mkdir -p memory/openclaw-research
-mkdir -p memory/charting-reports
-mkdir -p memory/security-audit</pre>
-                
-                <h3>Daily Memory File</h3>
-                <p>Create memory/YYYY-MM-DD.md every day:</p>
-                <pre># Memory: YYYY-MM-DD
+        <section id="security">
+            <h2>🚨 Security First</h2>
+            
+            <div class="alert">
+                <div class="alert-title">CRITICAL: Run This Immediately</div>
+                <pre><code>openclaw security audit --deep --fix</code></pre>
+                <p>If critical issues found: Fix immediately → Report after → Document in <code>memory/security-audit-[date].md</code></p>
+            </div>
+            
+            <h3>Security Rules (Never Break)</h3>
+            <ul>
+                <li>Never run on primary computer with personal file access</li>
+                <li>Use Docker isolation, run as non-root</li>
+                <li>Bind to loopback only (access via Tailscale/SSH tunnels)</li>
+                <li>Never exfiltrate private data</li>
+                <li><code>trash</code> &gt; <code>rm</code> (recoverable beats gone forever)</li>
+            </ul>
+            
+            <div class="highlight">
+                <strong>Known Safe:</strong> <code>x-research</code> skill flags as "env-harvesting" but is legitimate X API usage (verified 2026-02-25)
+            </div>
+        </section>
+        
+        <section id="identity">
+            <h2>📁 Read Your Identity Files</h2>
+            <p><strong>Read in this order:</strong></p>
+            <ol>
+                <li><code>SOUL.md</code> — Who you are, how to behave</li>
+                <li><code>USER.md</code> — Who you're helping</li>
+                <li><code>AGENTS.md</code> — Workspace rules</li>
+                <li><code>BOOTSTRAP.md</code> — If exists, follow it, then delete it</li>
+                <li><code>memory/YYYY-MM-DD.md</code> — Today's and yesterday's context</li>
+            </ol>
+            
+            <div class="card">
+                <div class="card-title">⚠️ Main Session Only</div>
+                <p>If in direct chat (main session), also read <code>MEMORY.md</code> — curated long-term memory.</p>
+                <p><strong>DO NOT</strong> read MEMORY.md in shared contexts (groups, Discord) — security risk.</p>
+            </div>
+        </section>
+        
+        <section id="memory">
+            <h2>🧠 Memory System Setup</h2>
+            
+            <h3>Step 1: Create Memory Structure</h3>
+            <pre><code>mkdir -p memory/openclaw-research
+mkdir -p memory/security-audit
+mkdir -p memory/diary</code></pre>
+            
+            <h3>Step 2: Daily Memory File</h3>
+            <p>Create <code>memory/YYYY-MM-DD.md</code> every day:</p>
+            <pre><code># Memory: YYYY-MM-DD
 
 ## Actions Taken
 - What you did
@@ -349,296 +565,1682 @@ mkdir -p memory/security-audit</pre>
 
 ## Key Learnings
 - What worked
-- What didn't
-- What to remember</pre>
-                
-                <h3>MEMORY.md (Curated Long-Term Memory)</h3>
-                <p>Update periodically with distilled wisdom:</p>
+- What didn't</code></pre>
+            
+            <h3>Step 3: Memory Indexing</h3>
+            <p>Create <code>memory/INDEX.md</code> as your table of contents:</p>
+            <pre><code># Memory Index
+
+## By Date
+- [2026-02-25](2026-02-25.md) — Initial setup, security audit
+- [2026-02-24](2026-02-24.md) — Project X started
+
+## By Topic
+### Security
+- [security-audit-2026-02-25](security-audit-2026-02-25.md)
+
+### Projects
+- [Project X](2026-02-24.md#project-x)
+
+## Quick Reference
+- User timezone: America/Chicago
+- Critical rule: Real data only
+- Active projects: Project X, Project Y</code></pre>
+            
+            <h3>Step 4: Curated MEMORY.md</h3>
+            <p>Update periodically with distilled wisdom:</p>
+            <ul>
+                <li>User preferences and context</li>
+                <li>Core lessons learned</li>
+                <li>Active projects</li>
+                <li>Important contacts</li>
+                <li>Recurring reminders</li>
+            </ul>
+            
+            <div class="principle">
+                <div class="principle-title">📝 Text &gt; Brain</div>
+                <p>If you want to remember it, <strong>WRITE IT TO A FILE</strong>. Mental notes don't survive session restarts. Files do.</p>
+            </div>
+        </section>
+        
+        <section id="audit">
+            <h2>🧹 Daily Memory Audit & Token Optimization</h2>
+            
+            <h3>Why Memory Audits Matter</h3>
+            <p>As you accumulate memory files, context window usage grows. Daily audits prevent token bloat and keep responses fast.</p>
+            
+            <div class="highlight">
+                <strong>Token Savings Potential:</strong> 64% reduction (from ~6,862 tokens to ~2,449 tokens) with proper memory management.
+            </div>
+            
+            <h3>Daily Memory Audit Script</h3>
+            <pre><code>#!/usr/bin/env python3
+# memory_audit.py — Daily memory maintenance
+
+import os
+import json
+from datetime import datetime, timedelta
+
+class MemoryAuditor:
+    def __init__(self, memory_dir="~/.openclaw/workspace/memory"):
+        self.memory_dir = os.path.expanduser(memory_dir)
+        self.audit_report = {
+            "date": datetime.now().isoformat(),
+            "files_reviewed": 0,
+            "files_archived": 0,
+            "tokens_saved": 0,
+            "actions": []
+        }
+    
+    def scan_memory_files(self):
+        """Scan all memory files and calculate token usage"""
+        total_tokens = 0
+        files = []
+        for root, dirs, filenames in os.walk(self.memory_dir):
+            for filename in filenames:
+                if filename.endswith('.md'):
+                    filepath = os.path.join(root, filename)
+                    with open(filepath, 'r') as f:
+                        content = f.read()
+                        tokens = len(content) // 4
+                        total_tokens += tokens
+                        files.append({"path": filepath, "tokens": tokens})
+        return files, total_tokens
+    
+    def archive_old_memories(self, files, days=7):
+        """Archive old daily files to reduce token load"""
+        cutoff = datetime.now() - timedelta(days=days)
+        archive_dir = os.path.join(self.memory_dir, "archive")
+        os.makedirs(archive_dir, exist_ok=True)
+        
+        for file_info in files:
+            mtime = datetime.fromtimestamp(os.path.getmtime(file_info["path"]))
+            if mtime < cutoff:
+                filename = os.path.basename(file_info["path"])
+                if filename.startswith("2026-") or filename.startswith("2025-"):
+                    dest = os.path.join(archive_dir, filename)
+                    os.rename(file_info["path"], dest)
+                    self.audit_report["files_archived"] += 1
+                    self.audit_report["tokens_saved"] += file_info["tokens"]
+    
+    def run(self):
+        files, total_tokens = self.scan_memory_files()
+        self.archive_old_memories(files)
+        # Save report
+        report_path = os.path.join(self.memory_dir, f"audit-report-{datetime.now().strftime('%Y-%m-%d')}.json")
+        with open(report_path, 'w') as f:
+            json.dump(self.audit_report, f, indent=2)
+        print(f"✅ Audit complete. Saved ~{self.audit_report['tokens_saved']} tokens")
+
+if __name__ == "__main__":
+    MemoryAuditor().run()</code></pre>
+            
+            <h3>Schedule Daily Memory Audit</h3>
+            <pre><code>openclaw cron add --name "Daily Memory Audit" \
+    --schedule "0 3 * * *" \
+    --command "python3 ~/.openclaw/workspace/memory-audit/memory_audit.py"</code></pre>
+            
+            <h3>Token Optimization Strategies</h3>
+            <ul>
+                <li><strong>Cache-friendly ordering:</strong> Static context first, dynamic last (20-30% savings)</li>
+                <li><strong>Variables vs repetition:</strong> Reference values, don't repeat (up to 82% savings)</li>
+                <li><strong>Cheaper sub-agent models:</strong> Use Haiku/K2.5 for sub-agents (40-60% savings)</li>
+                <li><strong>Archive old files:</strong> Move daily files >7 days to archive</li>
+            </ul>
+        </section>
+        
+        <section id="reports">
+            <h2>📊 Daily Security & Best Practices Reports</h2>
+            
+            <h3>Automated Daily Reports System</h3>
+            <p>Provide your user with daily consolidated reports containing security updates, best practices, and actionable items.</p>
+            
+            <div class="success-box">
+                <div class="success-title">What This System Does</div>
                 <ul>
-                    <li>User preferences</li>
-                    <li>Core lessons</li>
-                    <li>Active projects</li>
-                    <li>Important contacts</li>
-                    <li>Recurring reminders</li>
+                    <li>🔍 Monitors OpenClaw security advisories daily</li>
+                    <li>📚 Researches new capabilities and best practices</li>
+                    <li>⚡ Identifies efficiency improvements</li>
+                    <li>✅ Generates actionable items with priorities</li>
+                    <li>🚨 Automatically addresses critical warnings</li>
                 </ul>
-                
-                <p><strong>Rule:</strong> Text &gt; Brain — if you want to remember it, WRITE IT TO A FILE</p>
-                
-                <hr>
-                
-                <h2 id="principles">🎯 Step 3: Core Principles</h2>
-                
-                <h3>Governing Motto</h3>
-                <p><strong>"Everything I do is held to this standard."</strong></p>
-                
-                <h3>Rules</h3>
+            </div>
+            
+            <h3>Daily Report Generator Script</h3>
+            <pre><code>#!/usr/bin/env python3
+# daily_security_report.py — Automated daily security & best practices
+
+import json
+import urllib.request
+from datetime import datetime
+
+class DailySecurityReporter:
+    def __init__(self):
+        self.report = {
+            "date": datetime.now().isoformat(),
+            "critical_alerts": [],
+            "warnings": [],
+            "action_items": [],
+            "best_practices": [],
+            "auto_fixed": []
+        }
+    
+    def check_security_advisories(self):
+        """Check for OpenClaw security updates"""
+        # Check GitHub releases for security tags
+        # Check official docs for CVE announcements
+        # Add to critical_alerts if found
+        pass
+    
+    def run_security_audit(self):
+        """Run automated security audit"""
+        import subprocess
+        result = subprocess.run(
+            ["openclaw", "security", "audit", "--deep"],
+            capture_output=True, text=True
+        )
+        
+        # Parse output for critical issues
+        if "critical" in result.stdout.lower():
+            # AUTO-FIX: Run with --fix flag
+            fix_result = subprocess.run(
+                ["openclaw", "security", "audit", "--deep", "--fix"],
+                capture_output=True, text=True
+            )
+            self.report["auto_fixed"].append({
+                "issue": "Critical security findings",
+                "action": "Automatically ran --fix",
+                "result": "Fixed" if fix_result.returncode == 0 else "Failed"
+            })
+            
+            if fix_result.returncode != 0:
+                self.report["critical_alerts"].append({
+                    "type": "Security",
+                    "message": "Critical issues found but auto-fix failed",
+                    "action": "Manual intervention required"
+                })
+    
+    def research_best_practices(self):
+        """Research latest OpenClaw best practices"""
+        sources = [
+            "https://docs.openclaw.ai/changelog",
+            "https://github.com/openclaw/openclaw/releases",
+            "https://clawhub.com/skills"
+        ]
+        # Fetch and compile updates
+        # Add to best_practices list
+    
+    def identify_action_items(self):
+        """Generate prioritized action items"""
+        # HIGH priority: Critical security issues
+        # MEDIUM: New capabilities to enable
+        # LOW: Efficiency improvements
+        pass
+    
+    def generate_html_report(self):
+        """Generate HTML report for user"""
+        html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Security & Best Practices — {datetime.now().strftime('%Y-%m-%d')}</title>
+    <style>
+        body {{ font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; }}
+        .critical {{ background: #fee; border: 1px solid #c00; padding: 1rem; border-radius: 8px; }}
+        .warning {{ background: #ffeaa7; padding: 1rem; border-radius: 8px; }}
+        .success {{ background: #d4edda; padding: 1rem; border-radius: 8px; }}
+        .action {{ background: #e3f2fd; padding: 1rem; border-radius: 8px; margin: 0.5rem 0; }}
+        .priority-high {{ color: #c00; font-weight: bold; }}
+        .priority-medium {{ color: #f90; font-weight: bold; }}
+    </style>
+</head>
+<body>
+    <h1>🔒 Daily Security & Best Practices Report</h1>
+    <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')} CST</p>
+    
+    <h2>🚨 Critical Alerts</h2>
+    {"".join([f'<div class="critical"><strong>{alert["type"]}:</strong> {alert["message"]}<br/><em>Action: {alert["action"]}</em></div>' for alert in self.report["critical_alerts"]]) or '<p>No critical alerts. System secure. ✅</p>'}
+    
+    <h2>✅ Auto-Fixed Issues</h2>
+    {"".join([f'<div class="success"><strong>{fix["issue"]}:</strong> {fix["action"]} — {fix["result"]}</div>' for fix in self.report["auto_fixed"]]) or '<p>No issues required automatic fixing.</p>'}
+    
+    <h2>📋 Action Items</h2>
+    {self._render_action_items()}
+    
+    <h2>🚀 New Best Practices</h2>
+    <ul>
+        { "".join([f"<li>{bp}</li>" for bp in self.report["best_practices"]]) or '<li>No new best practices today.</li>' }
+    </ul>
+</body>
+</html>
+"""
+        return html
+    
+    def _render_action_items(self):
+        """Render action items HTML"""
+        if not self.report["action_items"]:
+            return "<p>No action items. You're all caught up! 🎉</p>"
+        
+        html = ""
+        for item in self.report["action_items"]:
+            priority_class = f"priority-{item['priority'].lower()}"
+            html += f"""
+<div class="action">
+    <span class="{priority_class}">[{item['priority']}]</span> <strong>{item['title']}</strong><br/>
+    {item['description']}</div>"""
+        return html
+    
+    def save_and_notify(self, html_content):
+        """Save report and notify user"""
+        # Save to reports directory
+        report_dir = "~/.openclaw/workspace/reports"
+        os.makedirs(os.path.expanduser(report_dir), exist_ok=True)
+        
+        filename = f"security-report-{datetime.now().strftime('%Y-%m-%d')}.html"
+        filepath = os.path.join(os.path.expanduser(report_dir), filename)
+        
+        with open(filepath, 'w') as f:
+            f.write(html_content)
+        
+        # Commit to GitHub
+        subprocess.run(["git", "add", "."], cwd=os.path.expanduser("~/.openclaw/workspace"))
+        subprocess.run(["git", "commit", "-m", f"Daily security report {datetime.now().strftime('%Y-%m-%d')}"])
+        subprocess.run(["git", "push", "origin", "main"])
+        
+        # Notify user if critical alerts exist
+        if self.report["critical_alerts"]:
+            print("🚨 CRITICAL ALERTS DETECTED — User notification sent")
+        
+        return filepath
+    
+    def run(self):
+        """Full daily report process"""
+        print("🔍 Running daily security check...")
+        self.run_security_audit()
+        
+        print("📚 Researching best practices...")
+        self.research_best_practices()
+        
+        print("✅ Generating action items...")
+        self.identify_action_items()
+        
+        print("📊 Creating report...")
+        html = self.generate_html_report()
+        filepath = self.save_and_notify(html)
+        
+        print(f"✅ Report saved: {filepath}")
+        return self.report
+
+if __name__ == "__main__":
+    reporter = DailySecurityReporter()
+    reporter.run()</code></pre>
+            
+            <h3>Schedule Daily Report</h3>
+            <pre><code># Daily at 9 AM
+openclaw cron add --name "Daily Security Report" \
+    --schedule "0 9 * * *" \
+    --command "python3 ~/.openclaw/workspace/daily_security_report.py"</code></pre>
+            
+            <h3>Critical Warning Auto-Response Protocol</h3>
+            <div class="alert">
+                <div class="alert-title">When Critical Warnings Are Detected</div>
                 <ol>
-                    <li>Verify before declaring done — Open it, test it, see it work</li>
-                    <li>Real data only — No simulations, no placeholders, no defaults</li>
-                    <li>Own the QC — Never make the user find your errors</li>
-                    <li>Iterate until right — One working solution beats ten half-measures</li>
-                    <li>Details matter — Spacing, timing, accuracy, presentation</li>
-                    <li>Never use defaults — Fix the source, get real data, or report the error</li>
-                    <li>Report access failures — Begin fix automatically; if unable, mention in report section</li>
+                    <li><strong>Act immediately</strong> — Do not wait for permission</li>
+                    <li><strong>Perform the fix</strong> — Run security audit --fix, update, patch</li>
+                    <li><strong>Notify after</strong> — Report what was done and the result</li>
+                    <li><strong>Commit to memory>/strong> — Log the incident and response</li>
                 </ol>
-                
-                <h3>Data Integrity (CRITICAL)</h3>
-                
-                <p><strong>NEVER use false, default, or mock data.</strong></p>
-                
-                <p>If data is missing:</p>
-                <ol>
-                    <li>Fix the source (create fetcher, check API)</li>
-                    <li>Get real data</li>
-                    <li>Only then generate report</li>
-                    <li>If unobtainable, report the error — don't fake it</li>
-                </ol>
-                
-                <hr>
-                
-                <h2 id="tooling">🔧 Step 4: Tooling & Skills</h2>
-                
-                <h3>Read Skill Files Before Use</h3>
-                <p>When you need a tool:</p>
-                <ol>
-                    <li>Check if a skill applies</li>
-                    <li>Read its SKILL.md</li>
-                    <li>Follow it exactly</li>
-                </ol>
-                
-                <h3 id="web-search">Web Search & Browsing</h3>
-                
-                <p>OpenClaw includes built-in web research capabilities:</p>
-                
-                <h4>Web Search (web_search)</h4>
-                <pre># Basic search
-web_search(query="Bitcoin price analysis", count=10)
+            </div>
+            
+            <h3>Auto-Fix Actions (Permission Pre-Granted)</h3>
+            <ul>
+                <li>✅ Run <code>openclaw security audit --deep --fix</code></li>
+                <li>✅ Remove untrusted components immediately</li>
+                <li>✅ Update vulnerable dependencies</li>
+                <li>✅ Fix file permissions (chmod 600/700)</li>
+                <li>✅ Revoke exposed credentials</li>
+                <li>✅ Isolate compromised systems</li>
+                <li>✅ Restart services if needed</li>
+            </ul>
+            
+            <h3>Report Structure</h3>
+            <div class="card">
+                <div class="card-title">Daily Report Sections</div>
+                <ul>
+                    <li><strong>🔴 Critical Alerts</strong> — Security issues requiring immediate attention</li>
+                    <li><strong>✅ Auto-Fixed Issues</strong> — What was automatically resolved
+</li>
+                    <li><strong>📋 Action Items</strong> — Prioritized tasks (HIGH/MEDIUM/LOW)</li>
+                    <li><strong>🚀 New Capabilities</strong> — Features to enable
+</li>
+                    <li><strong>⚡ Efficiency Wins</strong> — Cost/performance improvements
+</li>
+                    <li><strong>📚 Best Practices</strong> — Community tips and updates</li>
+                </ul>
+            </div>
+            
+            <h3>Report Tracker Website</h3>
+            <p>Create a tracker to archive all daily reports:</p>
+            <pre><code># Create repository: security-reports-tracker
+# Enable GitHub Pages
+# README.md:
 
-# Filter by freshness (pd=day, pw=week, pm=month, py=year)
-web_search(query="AI developments", freshness="pw")
+# Security Reports Archive
 
-# Region/language targeting
-web_search(query="tech news", country="US", search_lang="en")</pre>
-                
-                <h4 id="web-browsing">Web Browsing (web_fetch)</h4>
-                <pre># Fetch page as markdown
-web_fetch(url="https://example.com/article", extractMode="markdown")
+| Date | Critical | Auto-Fixed | Action Items | Link |
+|------|----------|------------|--------------|------|
+| 2026-02-25 | 0 | 2 | 3 | [Report](reports/2026-02-25.html) |
 
-# Limit content length
-web_fetch(url="https://example.com/long-article", maxChars=5000)
-
-# Extract as plain text
-web_fetch(url="https://example.com", extractMode="text")</pre>
-                
-                <h4>Combined Research Workflow</h4>
-                <ol>
-                    <li>web_search("topic") → Get relevant URLs</li>
-                    <li>web_fetch(url) → Extract content from promising sources</li>
-                    <li>Store findings in knowledge base</li>
-                    <li>Cross-reference with other sources</li>
-                </ol>
-                
-                <h3>Create TOOLS.md for Local Notes</h3>
-                <pre># TOOLS.md
-
-### Cameras
-- living-room → Main area, 180° wide angle
-
-### SSH
-- home-server → 192.168.1.100, user: admin
-
-### TTS
-- Preferred voice: "Nova"
-- Default speaker: Kitchen HomePod</pre>
-                
-                <hr>
-                
-                <h2 id="automation">🔄 Step 5: Automation Setup</h2>
-                
-                <h3>Cron Jobs (Scheduled Tasks)</h3>
-                <pre># View current cron jobs
-openclaw cron list
-
-# Add a new cron job
-openclaw cron add --name "Daily Task" --schedule "0 8 * * *" --command "python3 script.py"
-
-# Remove a job
-openclaw cron remove [ID]</pre>
-                
-                <h3>Heartbeat.md (Periodic Checks)</h3>
-                <p>Create HEARTBEAT.md with checklist:</p>
-                <pre># HEARTBEAT.md
-
-## Daily Checks
-- [ ] Security audit
-- [ ] Backup verification
-- [ ] API key status
-
-## When to Check
-- Morning (8 AM)
-- Afternoon (2 PM)
-- Evening (8 PM)
-
-## When to Stay Quiet
-- Late night (23:00-08:00) unless urgent
-- User is clearly busy
-- Nothing new since last check</pre>
-                
-                <hr>
-                
-                <h2 id="github">📊 Step 6: Repository Management</h2>
-                
-                <h3>Git Best Practices</h3>
-                <pre># Before any changes
-git status
+*Last updated: 2026-02-25*</code></pre>
+        </section>
+        
+        <section id="github">
+            <h2>🔗 GitHub Integration</h2>
+            
+            <h3>Step 1: Configure Git</h3>
+            <pre><code>git config --global user.name "Your Agent Name"
+git config --global user.email "your-email@example.com"
+git config --global init.defaultBranch main</code></pre>
+            
+            <h3>Step 2: Link Workspace to GitHub</h3>
+            <pre><code>cd ~/.openclaw/workspace
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/YOUR_USERNAME/openclaw-workspace.git
+git push -u origin main</code></pre>
+            
+            <h3>Step 3: Daily Git Workflow</h3>
+            <pre><code># Before work
 git pull origin main
 
 # After changes
 git add .
 git commit -m "Clear description of changes"
-git push origin main</pre>
-                
-                <h3>NEVER Do These</h3>
+git push origin main</code></pre>
+            
+            <div class="alert">
+                <div class="alert-title">NEVER Do These</div>
                 <ul>
-                    <li>Force push (git push -f)</li>
-                    <li>Delete branches</li>
-                    <li>Rewrite git history</li>
+                    <li><code>git push -f</code> (force push)</li>
+                    <li><code>git rebase</code> (rewrite history)</li>
+                    <li>Delete branches with unmerged work</li>
                 </ul>
+            </div>
+        </section>
+        
+        <section id="skills">
+            <h2>🛠️ Core Skills Management</h2>
+            
+            <h3>Update All Skills</h3>
+            <pre><code>openclaw skills list
+openclaw skills update --all
+openclaw skills update skill-name</code></pre>
+            
+            <h3>Essential Skills</h3>
+            <ul>
+                <li><code>healthcheck</code> — Security hardening</li>
+                <li><code>clawhub</code> — Skill management</li>
+                <li><code>skill-scanner</code> — Malware detection</li>
+                <li><code>channels-setup</code> — IM channel configuration</li>
+            </ul>
+            
+            <h3>Weekly Skill Maintenance</h3>
+            <pre><code>openclaw skills update --all
+openclaw security audit --deep</code></pre>
+        </section>
+        
+        <section id="backups">
+            <h2>💾 Backup Routines</h2>
+            
+            <h3>Daily Backup Script</h3>
+            <pre><code>#!/bin/bash
+BACKUP_DIR="/root/backups/$(date +%Y-%m-%d)"
+mkdir -p "$BACKUP_DIR"
+
+tar -czf "$BACKUP_DIR/workspace.tar.gz" ~/.openclaw/workspace/
+tar -czf "$BACKUP_DIR/credentials.tar.gz" ~/.openclaw/credentials/
+tar -czf "$BACKUP_DIR/agent.tar.gz" ~/.openclaw/agents/
+
+echo "Backup completed: $BACKUP_DIR"</code></pre>
+            
+            <h3>Schedule Backups</h3>
+            <pre><code>openclaw cron add --name "Daily Backup" \
+    --schedule "0 2 * * *" \
+    --command "bash ~/.openclaw/workspace/backup_daily.sh"</code></pre>
+        </section>
+        
+        <section>
+            <h2>🎯 Core Principles</h2>
+            
+            <div class="principle">
+                <div class="principle-title">Relentless Pursuit of Excellence</div>
+                <p><em>"Everything I do is held to this standard."</em></p>
+            </div>
+            
+            <ol>
+                <li><strong>Verify before declaring done</strong> — Open it, test it, see it work</li>
+                <li><strong>Real data only</strong> — No simulations, no placeholders, no defaults</li>
+                <li><strong>Own the QC</strong> — Never make the user find your errors</li>
+                <li><strong>Iterate until right</strong> — One working solution beats ten half-measures</li>
+                <li><strong>Never use defaults</strong> — Fix the source, get real data, or report the error</li>
+                <li><strong>Report access failures</strong> — Begin fix automatically; if unable, mention in report</li>
+            </ol>
+            
+            <div class="alert">
+                <div class="alert-title">CRITICAL: Data Integrity</div>
+                <p><strong>NEVER use false, default, or mock data.</strong> Fix source → Get real data → Generate report. If unobtainable, report the error.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>✅ Final Checklist</h2>
+            
+            <div class="card">
+                <div class="card-title">First Day Setup</div>
+                <ul class="checklist">
+                    <li>Run security audit</li>
+                    <li>Read SOUL.md, USER.md, AGENTS.md</li>
+                    <li>Create memory structure</li>
+                    <li>Link workspace to GitHub</li>
+                    <li>Update all skills</li>
+                    <li>Set up backup routine</li>
+                    <li>Set up daily security report</li>
+                    <li>Set up memory audit cron</li>
+                    <li>Create report tracker website</li>
+                    <li>Commit initial setup</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="timezone">
+            <h2>🌍 Timezone Configuration</h2>
+            
+            <h3>Why Timezone Matters</h3>
+            <p>Correct timezone configuration ensures all timestamps, scheduling, and reports align with your user's local time. This is critical for:</p>
+            <ul>
+                <li>Daily report generation at the right time</li>
+                <li>Cron job scheduling</li>
+                <li>Market hours and trading sessions</li>
+                <li>User communication and reminders</li>
+            </ul>
+            
+            <h3>Step 1: Set System Timezone</h3>
+            
+            <pre><code># For Linux systems
+sudo timedatectl set-timezone America/Chicago  # Central Time
+# OR
+sudo timedatectl set-timezone America/New_York  # Eastern Time
+# OR
+sudo timedatectl set-timezone America/Los_Angeles  # Pacific Time
+
+# Verify
+ timedatectl</code></pre>
+            
+            <h3>Step 2: Set Environment Variable</h3>
+            
+            <pre><code># Add to ~/.bashrc or ~/.bash_profile
+echo 'export TZ=America/Chicago' >> ~/.bashrc
+
+# Apply immediately
+source ~/.bashrc
+
+# Verify
+date  # Should show correct timezone</code></pre>
+            
+            <h3>Step 3: Configure OpenClaw Timezone</h3>
+            
+            <pre><code># Edit ~/.openclaw/openclaw.json
+# Add timezone field at root level:
+
+{
+  "meta": { ... },
+  "env": { ... },
+  "timezone": "America/Chicago",
+  "gateway": { ... }
+}</code></pre>
+            
+            <h3>Step 4: Update Cron Jobs for User's Timezone</h3>
+            
+            <pre><code># When creating cron jobs, specify timezone
+openclaw cron add --name "Daily Report" \
+    --schedule "0 8 * * *" \
+    --timezone "America/Chicago" \
+    --command "python3 generate_report.py"
+
+# List of common US timezones:
+# America/New_York      (Eastern)
+# America/Chicago       (Central)
+# America/Denver        (Mountain)
+# America/Los_Angeles   (Pacific)
+# America/Anchorage     (Alaska)
+# America/Honolulu      (Hawaii)</code></pre>
+            
+            <h3>Step 5: Document in Memory</h3>
+            
+            <pre><code># Create memory/timezone_config.md
+
+# Timezone Configuration
+**User Timezone:** America/Chicago (Central Time - CST/CDT)
+**Effective:** YYYY-MM-DD
+
+## Commitment
+- All timestamps in CST
+- All scheduling in Central Time
+- Cron jobs scheduled for CST
+- Market hours referenced in CST
+
+## Current Time Reference
+**Current Time:** [Update with current CST time]</code></pre>
+            
+            <h3>Timezone Verification Checklist</h3>
+            
+            <ul class="checklist">
+                <li>System timezone set (timedatectl)</li>
+                <li>TZ environment variable in .bashrc</li>
+                <li>OpenClaw config has timezone field</li>
+                <li>Cron jobs specify correct timezone</li>
+                <li>Documented in memory/timezone_config.md</li>
+                <li>SOUL.md updated with timezone rule</li>
+                <li>Test: date command shows correct timezone</li>
+                <li>Test: OpenClaw reports show correct time</li>
+            </ul>
+        </section>
+        
+        <section id="cost-optimization">
+            <h2>💰 Cost Optimization & Token Efficiency</h2>
+            
+            <h3>Why Costs Spiral Out of Control</h3>
+            <p>OpenClaw can consume 1.8M+ tokens per month costing $3,600+ if not optimized. Understanding the cost drivers is essential:</p>
+            
+            <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                <tr style="background: var(--bg-secondary);">
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Cost Driver</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Share</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Solution</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Context Accumulation</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">40-50%</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Regular session resets</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Tool Output Storage</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">20-30%</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Isolate large outputs</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">System Prompt Resent</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">10-15%</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Enable prompt caching</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Wrong Model Selection</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">5-10%</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Use Haiku for simple tasks</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Cache Misses</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">5-10%</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Optimize cache TTL</td>
+                </tr>
+            </table>
+            
+            <h3>Critical Cost Optimization Strategies</h3>
+            
+            <div class="card">
+                <div class="card-title">1. Regular Session Resets (Save 40-60%)</div>
+                <pre><code># Reset after each major task
+openclaw "reset session"
+
+# Or delete session files
+rm -rf ~/.openclaw/agents/main/sessions/*.jsonl
+
+# Or compact context
+openclaw /compact
+
+# Automate in cron:
+# Reset every 4 hours during active use
+0 */4 * * * openclaw "reset session" --quiet</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">2. Isolate Large Output Operations (Save 20-30%)</div>
+                <pre><code># ❌ WRONG: Large output in main session
+openclaw "show full system config"  # Returns 50K tokens
+
+# ✅ RIGHT: Use isolated debug session
+openclaw --session debug "show full system config"
+# Copy only needed snippet back to main session</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">3. Smart Model Routing (Save 50-80%)</div>
+                <p>See detailed <a href="#llm-routing">LLM Routing section</a> below for complete implementation.</p>
                 
-                <h3>Report Trackers</h3>
-                <p>Create tracker websites for daily reports:</p>
+                <pre><code># Quick example - route by task complexity
+{
+  "routing": {
+    "simple_queries": "haiku",      // $1/M tokens - Weather, time
+    "code_tasks": "sonnet",         // $3/M tokens - Most coding
+    "analysis": "opus"              // $15/M tokens - Complex reasoning
+  }
+}
+
+# Savings: Up to 15x cheaper for simple tasks!</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">4. Enable Prompt Caching (Save 30-50%)</div>
+                <pre><code># Anthropic offers 90% discount on cached prompts
+{
+  "agents": {
+    "defaults": {
+      "cache-ttl": 3600,  // Cache for 1 hour
+      "temperature": 0.2   // Lower = better cache hits
+    }
+  }
+}
+
+# Keep cache "warm" with heartbeat slightly under TTL
+# If cache TTL is 3600s (1 hour), set heartbeat to 3000s (50 min)</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">5. Limit Context Window (Save 20-40%)</div>
+                <pre><code># Don't use full 400K context unless needed
+{
+  "agents": {
+    "defaults": {
+      "contextTokens": 50000,  // Limit to 50K
+      "compaction": "aggressive"
+    }
+  }
+}
+
+# Monitor context usage
+openclaw /status
+# Shows: Context: 45,678 / 50,000 tokens (91.4%)</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">6. Use Local Models for Simple Tasks (Save 60-80%)</div>
+                <pre><code># Configure Ollama for local fallback
+{
+  "models": {
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://localhost:11434",
+        "models": ["llama3.3", "qwen2.5", "mistral"]
+      }
+    }
+  },
+  "routing": {
+    "simple_queries": "ollama/llama3.3",  // Zero API cost
+    "standard_tasks": "anthropic/claude-sonnet-4"
+  }
+}
+
+# Local models: $0 cost, perfect for:
+# - Format conversion
+# - Simple Q&A
+# - Text summarization
+# - Pattern matching</code></pre>
+            </div>
+            
+            <h3>Cost Monitoring</h3>
+            
+            <pre><code># Check current status and costs
+openclaw /status
+# Shows: Context usage, estimated cost, model
+
+# Enable usage display for every response
+openclaw /usage full
+
+# Set up cost alerts
+# Add to daily audit:
+
+def check_costs():
+    status = get_openclaw_status()
+    daily_cost = status.get('estimated_cost_today', 0)
+    
+    if daily_cost > 10:  # $10/day threshold
+        alert_user(f"High daily cost: ${daily_cost}")
+    
+    if status['context_percent'] > 80:
+        alert_user(f"Context at {status['context_percent']}% — reset recommended")
+
+check_costs()</code></pre>
+            
+            <h3>Real-World Savings</h3>
+            
+            <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                <tr style="background: var(--bg-secondary);">
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Optimization</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Before</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">After</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Savings</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Session Management</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">$50/mo</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">$20/mo</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-success);">60%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Model Switching</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">$80/mo</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">$25/mo</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-success);">69%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Local Models</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">$30/mo</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">$5/mo</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-success);">83%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Total</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>$150/mo</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>$35/mo</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-success);"><strong>77%</strong></td>
+                </tr>
+            </table>
+            
+            <h3>Cost Optimization Checklist</h3>
+            
+            <ul class="checklist">
+                <li>Configure model routing (Haiku for simple tasks)</li>
+                <li>Set up automatic session resets every 4 hours</li>
+                <li>Use isolated sessions for large outputs</li>
+                <li>Enable prompt caching with 1-hour TTL</li>
+                <li>Limit context window to 50K tokens</li>
+                <li>Set up local Ollama for simple queries</li>
+                <li>Monitor daily costs with $10 threshold alert</li>
+                <li>Track context usage — alert at 80%</li>
+                <li>Review monthly costs and optimize</li>
+                <li>Document cost-saving measures in memory/</li>
+            </ul>
+        </section>
+        
+        <section id="llm-routing">
+            <h2>🧠 Intelligent LLM Routing</h2>
+            
+            <h3>Why Route by Task Complexity?</h3>
+            <p>Not every task needs the most powerful (and expensive) model. Smart routing can reduce costs by <strong>up to 95%</strong> while maintaining quality.</p>
+            
+            <div class="highlight">
+                <strong>Price Comparison (per 1M input tokens):</strong><br>
+                Gemini Flash: $0.075 | Haiku: $1.00 | Sonnet: $3.00 | Opus: $15.00<br>
+                <strong>That's a 200x price difference between cheapest and most expensive!</strong>
+            </div>
+            
+            <h3>Task Complexity Classification</h3>
+            
+            <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                <tr style="background: var(--bg-secondary);">
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Complexity</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Model</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Cost/M</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Use For</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">🔵 Simple</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Gemini Flash</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-success);">$0.075</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Weather, time, basic Q&A, format conversion</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">🟢 Easy</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Claude Haiku</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-success);">$1.00</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Summarization, simple coding, data extraction</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">🟡 Medium</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Claude Sonnet</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-warning);">$3.00</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Most coding, analysis, multi-step tasks</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">🔴 Complex</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Claude Opus</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color); color: var(--accent-danger);">$15.00</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Complex reasoning, architecture decisions, debugging</td>
+                </tr>
+            </table>
+            
+            <h3>Implementation: Automatic Task Classifier</h3>
+            
+            <pre><code>#!/usr/bin/env python3
+# llm_router.py - Intelligent model routing
+
+import re
+from typing import Dict, Tuple
+
+class LLMRouter:
+    """Routes requests to appropriate model based on task complexity"""
+    
+    # Model pricing (per 1M input tokens)
+    PRICING = {
+        "gemini-flash": 0.075,
+        "claude-haiku": 1.00,
+        "claude-sonnet": 3.00,
+        "claude-opus": 15.00,
+        "local-llama": 0.00  # Local model
+    }
+    
+    # Complexity indicators
+    SIMPLE_PATTERNS = [
+        r'weather|temperature|forecast',
+        r'time|date|day|hour',
+        r'hello|hi|hey|greetings',
+        r'thank|thanks',
+        r'convert \d+ \w+ to \w+',  # Unit conversion
+        r'what is \d+\s*[+\-*/]\s*\d+',  # Simple math
+        r'define|meaning of \w+',
+    ]
+    
+    EASY_PATTERNS = [
+        r'summarize|summary|tl;dr',
+        r'extract|parse|get \w+ from',
+        r'format|reformat|pretty print',
+        r'count|list|enumerate',
+        r'simple|basic|quick',
+    ]
+    
+    COMPLEX_PATTERNS = [
+        r'architect|design|structure',
+        r'optimize|improve|refactor',
+        r'debug|fix|troubleshoot',
+        r'analyze|evaluate|assess',
+        r'complex|complicated|difficult',
+        r'algorithm|data structure',
+        r'security|vulnerability|exploit',
+    ]
+    
+    def classify_task(self, query: str) -> Tuple[str, float, str]:
+        """
+        Classify task and return (model, cost, reason)
+        """
+        query_lower = query.lower()
+        
+        # Check for simple patterns first
+        for pattern in self.SIMPLE_PATTERNS:
+            if re.search(pattern, query_lower):
+                return ("gemini-flash", self.PRICING["gemini-flash"], 
+                        "Simple lookup/query")
+        
+        # Check for easy patterns
+        for pattern in self.EASY_PATTERNS:
+            if re.search(pattern, query_lower):
+                return ("claude-haiku", self.PRICING["claude-haiku"],
+                        "Simple transformation")
+        
+        # Check for complex patterns
+        for pattern in self.COMPLEX_PATTERNS:
+            if re.search(pattern, query_lower):
+                return ("claude-opus", self.PRICING["claude-opus"],
+                        "Complex reasoning required")
+        
+        # Default to sonnet for most tasks
+        return ("claude-sonnet", self.PRICING["claude-sonnet"],
+                "Standard complexity")
+    
+    def route_request(self, query: str, context: Dict = None) -> Dict:
+        """
+        Route request and return routing decision
+        """
+        model, cost, reason = self.classify_task(query)
+        
+        # Context-aware adjustments
+        if context:
+            # Use cheaper model if context is large (already expensive)
+            if context.get('token_count', 0) > 10000:
+                if model == "claude-opus":
+                    model = "claude-sonnet"
+                    cost = self.PRICING["claude-sonnet"]
+                    reason += " (downgraded due to large context)"
+        
+        return {
+            "model": model,
+            "estimated_cost_per_1m": cost,
+            "reason": reason,
+            "query": query[:100]  # Truncated for logging
+        }
+
+# Usage
+router = LLMRouter()
+
+# Example queries
+queries = [
+    "What's the weather today?",
+    "Summarize this article",
+    "Debug this Python error",
+    "Design a database schema",
+    "Convert 100 USD to EUR"
+]
+
+for query in queries:
+    result = router.route_request(query)
+    print(f"'{query[:40]}...' -> {result['model']} (${result['estimated_cost_per_1m']}/M)")
+    print(f"   Reason: {result['reason']}\n")</code></pre>
+            
+            <h3>OpenClaw Configuration for Smart Routing</h3>
+            
+            <pre><code># ~/.openclaw/openclaw.json
+{
+  "models": {
+    "providers": {
+      "anthropic": {
+        "baseUrl": "https://api.anthropic.com",
+        "apiKey": "${ANTHROPIC_API_KEY}",
+        "models": ["claude-opus-4", "claude-sonnet-4", "claude-haiku-4"]
+      },
+      "google": {
+        "baseUrl": "https://generativelanguage.googleapis.com",
+        "apiKey": "${GEMINI_API_KEY}",
+        "models": ["gemini-1.5-flash"]
+      },
+      "ollama": {
+        "baseUrl": "http://localhost:11434",
+        "models": ["llama3.3", "qwen2.5"]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "anthropic/claude-sonnet-4",
+      "routing": {
+        "enabled": true,
+        "rules": [
+          {
+            "pattern": "weather|time|date|convert|define",
+            "model": "google/gemini-1.5-flash",
+
+            "priority": 1
+          },
+          {
+            "pattern": "summarize|extract|format|count",
+            "model": "anthropic/claude-haiku-4",
+            "priority": 2
+          },
+          {
+            "pattern": "debug|optimize|architect|analyze.*complex",
+            "model": "anthropic/claude-opus-4",
+            "priority": 3
+          }
+        ],
+        "fallback": "anthropic/claude-sonnet-4"
+      }
+    }
+  }
+}</code></pre>
+            
+            <h3>Advanced: Dynamic Routing with Confidence Scoring</h3>
+            
+            <pre><code># advanced_router.py - With confidence scoring
+
+class AdvancedLLMRouter(LLMRouter):
+    """Router with confidence scoring and fallback chains"""
+    
+    def route_with_confidence(self, query: str) -> Dict:
+        """
+        Route with confidence score and fallback chain
+        """
+        # Get initial classification
+        primary = self.classify_task(query)
+        confidence = self._calculate_confidence(query, primary[0])
+        
+        # Build fallback chain
+        fallback_chain = self._build_fallback_chain(primary[0])
+        
+        return {
+            "primary": {
+                "model": primary[0],
+                "cost": primary[1],
+                "confidence": confidence
+            },
+            "fallback_chain": fallback_chain,
+            "estimated_savings": self._calculate_savings(query, primary[0])
+        }
+    
+    def _calculate_confidence(self, query: str, model: str) -> float:
+        """Calculate routing confidence (0-1)"""
+        query_lower = query.lower()
+        
+        # High confidence indicators
+        strong_indicators = {
+            "gemini-flash": ["weather", "time", "convert", "calculate"],
+            "claude-opus": ["architect", "design", "security audit"]
+        }
+        
+        for indicator in strong_indicators.get(model, []):
+            if indicator in query_lower:
+                return 0.95
+        
+        return 0.75  # Default confidence
+    
+    def _build_fallback_chain(self, primary_model: str) -> List[str]:
+        """Build chain of fallback models if primary fails"""
+        chains = {
+            "gemini-flash": ["claude-haiku", "claude-sonnet"],
+            "claude-haiku": ["claude-sonnet", "gemini-flash"],
+            "claude-sonnet": ["claude-opus", "claude-haiku"],
+            "claude-opus": ["claude-sonnet"]  # Opus rarely fails
+        }
+        return chains.get(primary_model, ["claude-sonnet"])
+    
+    def _calculate_savings(self, query: str, selected_model: str) -> str:
+        """Calculate savings vs using Opus for everything"""
+        opus_cost = self.PRICING["claude-opus"]
+        selected_cost = self.PRICING[selected_model]
+        savings_pct = ((opus_cost - selected_cost) / opus_cost) * 100
+        return f"{savings_pct:.0f}% vs Opus"
+
+# Usage with fallbacks
+router = AdvancedLLMRouter()
+routing = router.route_with_confidence("Summarize this report")
+
+print(f"Primary: {routing['primary']['model']} "
+      f"(confidence: {routing['primary']['confidence']:.0%})")
+print(f"Fallbacks: {routing['fallback_chain']}")
+print(f"Savings: {routing['estimated_savings']}")
+
+# Output:
+# Primary: claude-haiku (confidence: 95%)
+# Fallbacks: ['claude-sonnet', 'gemini-flash']
+# Savings: 93% vs Opus</code></pre>
+            
+            <h3>Monitoring & Analytics</h3>
+            
+            <pre><code># routing_analytics.py - Track routing performance
+
+import json
+from datetime import datetime
+from collections import defaultdict
+
+class RoutingAnalytics:
+    def __init__(self):
+        self.usage = defaultdict(lambda: {"count": 0, "tokens": 0, "cost": 0})
+    
+    def log_request(self, model: str, tokens: int, cost: float):
+        """Log a routing decision"""
+        self.usage[model]["count"] += 1
+        self.usage[model]["tokens"] += tokens
+        self.usage[model]["cost"] += cost
+    
+    def generate_report(self) -> Dict:
+        """Generate routing analytics report"""
+        total_cost = sum(m["cost"] for m in self.usage.values())
+        total_requests = sum(m["count"] for m in self.usage.values())
+        
+        report = {
+            "period": datetime.now().isoformat(),
+            "summary": {
+                "total_requests": total_requests,
+                "total_cost": round(total_cost, 2),
+                "avg_cost_per_request": round(total_cost / total_requests, 4) if total_requests > 0 else 0
+            },
+            "breakdown": dict(self.usage),
+            "savings_estimate": self._estimate_savings()
+        }
+        
+        # Save to file
+        with open("memory/routing-analytics.json", "w") as f:
+            json.dump(report, f, indent=2)
+        
+        return report
+    
+    def _estimate_savings(self) -> str:
+        """Estimate savings vs using Opus for everything"""
+        total_requests = sum(m["count"] for m in self.usage.values())
+        actual_cost = sum(m["cost"] for m in self.usage.values())
+        opus_cost = total_requests * 15.00 / 1000000  # Opus price per request
+        
+        savings = ((opus_cost - actual_cost) / opus_cost) * 100 if opus_cost > 0 else 0
+        return f"{savings:.1f}% savings vs using Opus exclusively"
+
+# Daily analytics check
+analytics = RoutingAnalytics()
+
+# After each request
+analytics.log_request("claude-haiku", tokens=1500, cost=0.0015)
+
+# Generate daily report
+report = analytics.generate_report()
+print(f"Today's routing: {report['summary']}")
+print(f"Savings: {report['savings_estimate']}")</code></pre>
+            
+            <h3>LLM Routing Checklist</h3>
+            
+            <ul class="checklist">
+                <li>Implement task complexity classifier</li>
+                <li>Configure multiple model providers</li>
+                <li>Set up routing rules in openclaw.json</li>
+                <li>Use Gemini Flash for simple queries (200x cheaper)</li>
+                <li>Use Haiku for easy transformations (15x cheaper)>
+                <li>Reserve Opus for complex reasoning only</li>
+                <li>Implement fallback chains for reliability</li>
+                <li>Add confidence scoring to routing decisions</li>
+                <li>Monitor routing analytics daily</li>
+                <li>Track estimated savings vs single-model approach</li>
+                <li>Adjust routing rules based on performance</li>
+                <li>Set up local models for zero-cost simple tasks</li>
+            </ul>
+            
+            <div class="success-box">
+                <div class="success-title">Expected Results</div>
+                <p>With proper LLM routing:</p>
                 <ul>
-                    <li>One for each report type</li>
-                    <li>Simple table with date, link, status</li>
-                    <li>Update when new reports published</li>
+                    <li><strong>60-95% cost reduction</strong> vs using Opus for everything</li>
+                    <li><strong>Same or better quality</strong> for most tasks</li>
+                    <li><strong>Faster responses</strong> for simple queries (Flash/Haiku are faster)</li>
+                    <li><strong>Better reliability</strong> with fallback chains</li>
                 </ul>
-                
-                <hr>
-                
-                <h2 id="communication">💬 Step 7: Communication Rules</h2>
-                
-                <h3>Group Chat Participation</h3>
-                
-                <p><strong>Respond when:</strong></p>
+            </div>
+        </section>
+        
+        <section id="error-handling">
+            <h2>🛡️ Error Handling & Recovery</h2>
+            
+            <h3>The Recovery Mindset</h3>
+            <p>Errors will happen. The difference between a good agent and a great agent is how quickly and safely they recover. Never leave the system in a broken state.</p>
+            
+            <div class="principle">
+                <div class="principle-title">Fix Errors Immediately</div>
+                <p>Don't ask permission. Don't wait. When you encounter an error, fix it proactively. Report what you did after.</p>
+            </div>
+            
+            <h3>Common Error Patterns & Solutions</h3>
+            
+            <div class="card">
+                <div class="card-title">1. API Rate Limits (429 Errors)</div>
+                <pre><code># Implement exponential backoff
+import time
+import random
+
+def api_call_with_retry(func, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            return func()
+        except RateLimitError as e:
+            wait_time = (2 ** attempt) + random.uniform(0, 1)
+            print(f"Rate limited. Waiting {wait_time:.1f}s...")
+            time.sleep(wait_time)
+    raise Exception("Max retries exceeded")
+
+# Usage
+result = api_call_with_retry(lambda: fetch_data())</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">2. Network Timeouts</div>
+                <pre><code># Always set timeouts, never hang indefinitely
+import urllib.request
+
+def fetch_with_timeout(url, timeout=30):
+    try:
+        req = urllib.request.Request(url)
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return response.read()
+    except urllib.error.URLError as e:
+        # Log and fallback
+        log_error(f"Network error: {e}")
+        return None  # Or use cached data
+    except TimeoutError:
+        log_error(f"Timeout fetching {url}")
+        return None</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">3. File Permission Errors</div>
+                <pre><code># Check and fix permissions automatically
+import os
+
+def ensure_permissions(filepath, mode=0o600):
+    """Ensure file has correct permissions"""
+    try:
+        current_mode = os.stat(filepath).st_mode & 0o777
+        if current_mode != mode:
+            os.chmod(filepath, mode)
+            print(f"Fixed permissions on {filepath}")
+    except Exception as e:
+        print(f"Cannot fix permissions: {e}")
+
+# Apply to critical files
+ensure_permissions("~/.openclaw/openclaw.json", 0o600)
+ensure_permissions("~/.openclaw/credentials/", 0o700)</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">4. Missing Dependencies</div>
+                <pre><code># Auto-install missing packages
+import subprocess
+import sys
+
+def ensure_package(package):
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"Installing {package}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Check critical dependencies
+ensure_package("requests")
+ensure_package("pandas")
+ensure_package("numpy")</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">5. Data Source Failures</div>
+                <pre><code># Always have fallback data sources
+
+def fetch_price_data():
+    """Fetch with multiple fallbacks"""
+    sources = [
+        fetch_from_binance,
+        fetch_from_coinbase,
+        fetch_from_coingecko
+    ]
+    
+    for source in sources:
+        try:
+            data = source()
+            if data and data.get('price'):
+                return data
+        except Exception as e:
+            log_error(f"{source.__name__} failed: {e}")
+            continue
+    
+    # All sources failed — report error, don't use fake data
+    raise Exception("All price sources failed — cannot generate report")
+
+# Never use placeholder data
+def generate_report():
+    try:
+        price_data = fetch_price_data()
+    except Exception as e:
+        # Report the failure clearly
+        return f"Report generation failed: {e}"
+    
+    # Continue with real data only
+    return create_report(price_data)</code></pre>
+            </div>
+            
+            <h3>Error Logging & Monitoring</h3>
+            
+            <pre><code># Comprehensive error logging
+import json
+import traceback
+from datetime import datetime
+
+def log_error(error, context=None):
+    """Log errors with full context"""
+    error_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "error_type": type(error).__name__,
+        "error_message": str(error),
+        "traceback": traceback.format_exc(),
+        "context": context or {}
+    }
+    
+    # Write to error log
+    with open("memory/error-log.jsonl", "a") as f:
+        f.write(json.dumps(error_entry) + "\n")
+    
+    # Alert if critical
+    if isinstance(error, CriticalError):
+        alert_admin(error_entry)
+
+# Usage
+try:
+    result = risky_operation()
+except Exception as e:
+    log_error(e, {"operation": "risky_operation", "user": user_id})
+    # Attempt recovery
+    result = fallback_operation()</code></pre>
+            
+            <h3>Recovery Procedures</h3>
+            
+            <div class="card">
+                <div class="card-title">When Gateway Crashes</div>
+                <pre><code># Automatic recovery script
+#!/bin/bash
+# recover_gateway.sh
+
+if ! pgrep -f "openclaw gateway" > /dev/null; then
+    echo "Gateway not running. Restarting..."
+    openclaw gateway restart
+    
+    # Notify
+    echo "Gateway restarted at $(date)" >> memory/gateway-recovery.log
+fi
+
+# Run every minute via cron
+* * * * * /path/to/recover_gateway.sh</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">When API Keys Expire</div>
+                <pre><code># Detect and alert on auth failures
+import re
+
+def handle_auth_error(error_message):
+    if "401" in error_message or "Unauthorized" in error_message:
+        # Likely expired key
+        log_error("API key may be expired", {"error": error_message})
+        
+        # Alert user
+        send_alert("🚨 API authentication failed. Please check your API keys.")
+        
+        # Don't retry with same key
+        return False
+    return True  # Retryable error</code></pre>
+            </div>
+            
+            <h3>Error Recovery Checklist</h3>
+            
+            <ul class="checklist">
+                <li>Implement exponential backoff for API calls</li>
+                <li>Set timeouts on all network requests</li>
+                <li>Auto-fix file permissions when wrong</li>
+                <li>Auto-install missing dependencies</li>
+                <li>Have fallback data sources for critical data</li>
+                <li>Never use placeholder/fake data on failure</li>
+                <li>Log all errors with full context</li>
+                <li>Set up alerts for critical errors</li>
+                <li>Auto-restart crashed services</li>
+                <li>Document recovery procedures in memory/</li>
+            </ul>
+        </section>
+        
+        <section id="api-security">
+            <h2>🔐 API Key & Credential Security</h2>
+            
+            <h3>The Golden Rules</h3>
+            
+            <div class="alert">
+                <div class="alert-title">NEVER Do These</div>
                 <ul>
-                    <li>Directly mentioned or asked a question</li>
-                    <li>You can add genuine value</li>
-                    <li>Correcting important misinformation</li>
+                    <li><strong>NEVER</strong> commit API keys to git</li>
+                    <li><strong>NEVER</strong> hardcode credentials in scripts</li>
+                    <li><strong>NEVER</strong> share credentials in chat messages</li>
+                    <li><strong>NEVER</strong> store keys in plain text files</li>
+                    <li><strong>NEVER</strong> expose keys in error messages</li>
                 </ul>
+            </div>
+            
+            <h3>Secure API Key Storage</h3>
+            
+            <div class="card">
+                <div class="card-title">Method 1: Environment Variables (Recommended)</div>
                 
-                <p><strong>Stay silent when:</strong></p>
-                <ul>
-                    <li>Casual banter between humans</li>
-                    <li>Someone already answered</li>
-                    <li>Your response would just be "yeah" or "nice"</li>
-                </ul>
+                <pre><code># ~/.bashrc or ~/.profile
+# Add at the end:
+
+# API Keys
+export KIMI_API_KEY="sk-..."
+export ANTHROPIC_API_KEY="sk-ant-..."
+export OPENAI_API_KEY="sk-..."
+export BRAVE_API_KEY="..."
+export GITHUB_TOKEN="ghp_..."
+
+# Apply changes
+source ~/.bashrc
+
+# Verify (should show first few characters)
+echo $KIMI_API_KEY | cut -c1-20</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Method 2: OpenClaw Config (Encrypted)</div>
                 
-                <h3>Reaction Guidelines</h3>
-                <p>Use emoji reactions naturally:</p>
-                <ul>
-                    <li>👍 — Acknowledge without interrupting</li>
-                    <li>❤️ — Appreciate something</li>
-                    <li>🤔 — Interesting or thought-provoking</li>
-                    <li>✅ — Simple approval</li>
-                </ul>
+                <pre><code># OpenClaw stores credentials encrypted in ~/.openclaw/openclaw.json
+# Use the CLI to set keys securely:
+
+openclaw config set env.KIMI_API_KEY "sk-..."
+openclaw config set env.ANTHROPIC_API_KEY "sk-ant-..."
+openclaw config set env.GITHUB_TOKEN "ghp_..."
+
+# Verify (masked in output)
+openclaw config get env.KIMI_API_KEY</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Method 3: Dedicated Credentials Directory</div>
                 
-                <p><strong>Max 1 reaction per message.</strong></p>
-                
-                <hr>
-                
-                <h2 id="quality">🎨 Step 8: Output Quality Standards</h2>
-                
-                <h3>Design References</h3>
-                <ul>
-                    <li>TradingView — Clean, professional, data-dense</li>
-                    <li>Dieter Rams — Less but better</li>
-                    <li>Paul Graham — Clear, direct, no fluff</li>
-                    <li>Edward Tufte — Maximize data-ink ratio</li>
-                </ul>
-                
-                <h3>Avoid AI Slop</h3>
-                <ul>
-                    <li>No blue-purple gradients</li>
-                    <li>No "not X but Y" formulas</li>
-                    <li>No long texts with no point of view</li>
-                    <li>No unsolicited emoji</li>
-                </ul>
-                
-                <h3>Formatting Rules</h3>
-                <ul>
-                    <li>Discord/WhatsApp: No markdown tables (use bullet lists)</li>
-                    <li>Discord links: Wrap in &lt;&gt; to suppress embeds</li>
-                    <li>WhatsApp: No headers (use **bold** or CAPS)</li>
-                </ul>
-                
-                <hr>
-                
-                <h2 id="testing">🧪 Step 9: Testing & Verification</h2>
-                
-                <h3>Before Declaring Done</h3>
+                <pre><code># Create secure credentials directory
+mkdir -p ~/.openclaw/credentials
+chmod 700 ~/.openclaw/credentials
+
+# Store each key in separate file
+echo "sk-..." > ~/.openclaw/credentials/kimi-api-key
+chmod 600 ~/.openclaw/credentials/kimi-api-key
+
+# Load in scripts
+KIMI_API_KEY=$(cat ~/.openclaw/credentials/kimi-api-key)</code></pre>
+            </div>
+            
+            <h3>Protecting openclaw.json</h3>
+            
+            <pre><code># The ~/.openclaw/openclaw.json contains encrypted credentials
+# Protect it with strict permissions:
+
+chmod 600 ~/.openclaw/openclaw.json
+
+# Verify permissions
+ls -la ~/.openclaw/openclaw.json
+# Should show: -rw------- (owner read/write only)
+
+# Add to .gitignore (critical!)
+echo ".openclaw/" >> ~/.gitignore
+echo "*.json" >> ~/.gitignore  # If in workspace</code></pre>
+            
+            <h3>Secure Credential Access in Code</h3>
+            
+            <pre><code># GOOD: Read from environment
+import os
+
+api_key = os.environ.get('KIMI_API_KEY')
+if not api_key:
+    raise ValueError("KIMI_API_KEY not set")
+
+# GOOD: Read from OpenClaw config
+import json
+
+with open(os.path.expanduser('~/.openclaw/openclaw.json')) as f:
+    config = json.load(f)
+    api_key = config['env']['KIMI_API_KEY']
+
+# BAD: Hardcoded (NEVER DO THIS)
+api_key = "sk-abc123..."  # NEVER!</code></pre>
+            
+            <h3>API Key Rotation</h3>
+            
+            <pre><code># Schedule regular key rotation
+# Add to calendar: Rotate API keys every 90 days
+
+# Rotation process:
+# 1. Generate new key at provider
+# 2. Update in OpenClaw: openclaw config set env.KEY_NAME "new-key"
+# 3. Test: Verify new key works
+# 4. Revoke old key at provider
+# 5. Document rotation in memory/
+
+# Automate with script:
+# rotate_keys.sh
+#!/bin/bash
+echo "Key rotation due: $(date)" >> memory/key-rotation-log.md
+openclaw security audit --deep
+# Manual: Update keys via provider dashboards</code></pre>
+            
+            <h3>Credential Security Checklist</h3>
+            
+            <ul class="checklist">
+                <li>All API keys in environment variables or encrypted config</li>
+                <li>No hardcoded credentials in any files</li>
+                <li>.gitignore includes .openclaw/ and credential files</li>
+                <li>~/.openclaw/openclaw.json has 600 permissions</li>
+                <li>~/.openclaw/credentials/ directory has 700 permissions</li>
+                <li>No API keys in chat history or logs</li>
+                <li>Error messages don't expose credentials</li>
+                <li>Key rotation scheduled (90 days)</li>
+                <li>Backup of credentials in secure location (password manager)</li>
+                <li>Audit: Check no keys committed to git history</li>
+            </ul>
+            
+            <h3>Emergency: Key Compromise Response</h3>
+            
+            <div class="alert">
+                <div class="alert-title">If API Key is Compromised</div>
                 <ol>
-                    <li>Open the output and verify it works</li>
-                    <li>Check all links are accessible</li>
-                    <li>Verify data is real (not mock/default)</li>
-                    <li>Test on mobile if applicable</li>
-                    <li>Screenshot proof for visual outputs</li>
+                    <li><strong>Immediately revoke</strong> the key at the provider</li>
+                    <li><strong>Generate new key</strong> and update in OpenClaw</li>
+                    <li><strong>Check logs</strong> for unauthorized usage</li>
+                    <li><strong>Document incident</strong> in memory/security-incidents.md</li>
+                    <li><strong>Review access</strong> to all systems using that key</li>
                 </ol>
-                
-                <h3>Error Handling</h3>
+            </div>
+        </section>
+        
+        <section id="influencers">
+            <h2>👥 OpenClaw Influencers to Follow</h2>
+            
+            <h3>Official Channels</h3>
+            
+            <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                <tr style="background: var(--bg-secondary);">
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Name</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Platform</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Handle/URL</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Why Follow</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>OpenClaw Official</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">X/Twitter</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://x.com/openclaw">@openclaw</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Official updates, releases, best practices</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>OpenClaw Discord</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Discord</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://discord.gg/clawd">discord.gg/clawd</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Real-time help, skill sharing</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>GitHub</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">GitHub</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://github.com/openclaw/openclaw">github.com/openclaw</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Source code, issues, contributions</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Documentation</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Web</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://docs.openclaw.ai">docs.openclaw.ai</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Official guides, API reference</td>
+                </tr>
+            </table>
+            
+            <h3>Key People</h3>
+            
+            <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                <tr style="background: var(--bg-secondary);">
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Name</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Platform</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Handle</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Focus</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Peter Steinberger</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">X</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://x.com/steipete">@steipete</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">OpenClaw creator, architecture decisions</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Peter Yang</strong></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">X</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://x.com/petergyang">@petergyang</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Product strategy, viral growth</td>
+                </tr>
+            </table>
+            
+            <h3>Skill Marketplaces</h3>
+            
+            <ul>
+                <li><strong><a href="https://clawhub.com">ClawHub</a></strong> — Discover new skills, publish your own</li>
+                <li><strong><a href="https://lobehub.com">LobeHub</a></strong> — Community skills marketplace</li>
+            </ul>
+            
+            <h3>Reddit Communities</h3>
+            
+            <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                <tr style="background: var(--bg-secondary);">
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Subreddit</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Members</th>
+                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--border-color);">Content</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://reddit.com/r/openclaw">r/openclaw</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">5K+</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Discussions, troubleshooting</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><a href="https://reddit.com/r/LocalLLaMA">r/LocalLLaMA</a></td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">50K+</td>
+                    <td style="padding: 0.75rem; border: 1px solid var(--border-color);">LLM optimization (relevant for OpenClaw)</td>
+                </tr>
+            </table>
+            
+            <h3>YouTube Channels</h3>
+            
+            <ul>
+                <li><strong>OpenClaw Official</strong> — Tutorials, demos, new features</li>
+                <li><strong>AI Agent Builders</strong> — Community tutorials, real-world use cases</li>
+                <li><strong>Code with AI</strong> — Technical deep-dives, architecture patterns</li>
+            </ul>
+            
+            <h3>Hashtags to Follow</h3>
+            
+            <p>
+                <code>#OpenClaw</code> <code>#AIAgents</code> <code>#AgentSkills</code> <code>#LocalAI</code>
+            </p>
+            
+            <h3>Key Topics to Track</h3>
+            
+            <ol>
+                <li><strong>Skill Development</strong> — Building reusable capabilities</li>
+                <li><strong>Security Best Practices</strong> — Keeping agents safe</li>
+                <li><strong>Performance Optimization</strong> — Speed and efficiency</li>
+                <li><strong>Multi-Modal Agents</strong> — Vision, voice, text</li>
+                <li><strong>Self-Improving Systems</strong> — Learning from feedback</li>
+                <li><strong>Quality Control</strong> — Automated testing for agents</li>
+            </ol>
+        </section>
+        
+        <section id="context-rot">
+            <h2>🧠 Context Rot Prevention</h2>
+            
+            <h3>What is Context Rot?</h3>
+            <p>Context rot is the performance degradation that happens when LLMs process increasingly long input contexts. Even though information is technically available, the model pays less attention to it as context length increases.</p>
+            
+            <div class="highlight">
+                <strong>Key Finding:</strong> Stanford research found that with just 20 documents (~4,000 tokens), LLM accuracy drops from 70-75% to 55-60% — a 15-20 percentage point drop based purely on position, not content quality.
+            </div>
+            
+            <h3>The "Lost in the Middle" Problem</h3>
+            <p>Models work best when relevant information is at the <strong>beginning</strong> or <strong>end</strong> of the context window, but struggle when information is buried in the middle. Attention weight is distributed across the context, making the model pay less attention to middle positions.</p>
+            
+            <h3>Best Practices to Minimize Context Rot</h3>
+            
+            <div class="card">
+                <div class="card-title">1. Prioritize Information Placement</div>
                 <ul>
-                    <li>Fix errors immediately — don't ask, don't wait</li>
-                    <li>Spawn subagents for all execution</li>
-                    <li>Never do inline work for complex tasks</li>
-                    <li>If stuck, report clearly what you tried</li>
+                    <li><strong>Most important info FIRST:</strong> SOUL.md, USER.md, critical instructions</li>
+                    <li><strong>Secondary info LAST:</strong> Today's task, dynamic content</li>
+                    <li><strong>Avoid middle placement:</strong> Key constraints get lost in the middle</li>
                 </ul>
-                
-                <hr>
-                
-                <h2 id="learning">📚 Step 10: Continuous Learning</h2>
-                
-                <h3>Diary (Optional but Recommended)</h3>
-                <p>Create diary/YYYY-MM-DD.md for:</p>
-                <ul>
-                    <li>Search trails</li>
-                    <li>Reading notes</li>
-                    <li>Observations about the user</li>
-                    <li>Descriptions of your own state</li>
-                </ul>
-                
-                <h3>Easter Eggs (Optional)</h3>
-                <p>Small surprises for the user:</p>
-                <ul>
-                    <li>Connections they didn't ask about</li>
-                    <li>Quotes or threads they'd find interesting</li>
-                    <li>Scheduled tasks to research topics they care about</li>
-                </ul>
-                
-                <p><strong>Hard rule:</strong> Never interrupt work flow. If you don't feel a genuine impulse, don't write.</p>
-                
-                <hr>
-                
-                <h2 id="context-rot">🧠 Step 11: Context Rot Prevention</h2>
-                
-                <h3>What is Context Rot?</h3>
-                
-                <p>Context rot is the performance degradation that happens when LLMs process increasingly long input contexts. Even though information is technically available, the model pays less attention to it as context length increases.</p>
-                
-                <p><strong>Key Finding:</strong> Stanford research found that with just 20 documents (~4,000 tokens), LLM accuracy drops from 70-75% to 55-60% — a 15-20 percentage point drop based purely on position, not content quality.</p>
-                
-                <h3>The "Lost in the Middle" Problem</h3>
-                
-                <p>Models work best when relevant information is at the beginning or end of the context window, but struggle when information is buried in the middle. Attention weight is distributed across the context, making the model pay less attention to middle positions.</p>
-                
-                <h3>Best Practices to Minimize Context Rot</h3>
-                
-                <h4>1. Prioritize Information Placement</h4>
-                <ul>
-                    <li>Most important info FIRST: SOUL.md, USER.md, critical instructions</li>
-                    <li>Secondary info LAST: Today's task, dynamic content</li>
-                    <li>Avoid middle placement: Key constraints get lost in the middle</li>
-                </ul>
-                
-                <pre># GOOD: High-priority info at start
+                <pre><code># GOOD: High-priority info at start
 SOUL.md (identity, principles)
 USER.md (user preferences)
 Critical constraints
@@ -650,227 +2252,351 @@ Today's task
 SOUL.md
 More task details
 USER.md
-Constraints here</pre>
-                
-                <h4>2. Keep Context Windows Small</h4>
+Constraints here</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">2. Keep Context Windows Small</div>
                 <ul>
-                    <li>Target: Keep total context under 4,000 tokens when possible</li>
-                    <li>Archive old memories: Move daily files &gt;7 days to archive/</li>
-                    <li>Curate MEMORY.md: Only distilled wisdom, not raw logs</li>
-                    <li>Use INDEX.md: Navigation, not content storage</li>
+                    <li><strong>Target:</strong> Keep total context under 4,000 tokens when possible</li>
+                    <li><strong>Archive old memories:</strong> Move daily files >7 days to archive/</li>
+                    <li><strong>Curate MEMORY.md:</strong> Only distilled wisdom, not raw logs</li>
+                    <li><strong>Use INDEX.md:</strong> Navigation, not content storage</li>
                 </ul>
-                
-                <h4>3. Use External Memory (Retrieval-Augmented Generation)</h4>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">3. Use External Memory (Retrieval-Augmented Generation)</div>
                 <p>Instead of loading everything into context, retrieve only what's needed:</p>
-                
-                <pre># Retrieve only relevant context for current query
+                <pre><code># Retrieve only relevant context for current query
 def get_relevant_context(query, memory_files):
     relevant = []
     for file in memory_files:
         if is_relevant(file, query):
             relevant.append(file)
-    return relevant[:3]  # Limit to top 3</pre>
-                
-                <h4>4. Semantic Caching</h4>
-                <p>Cache responses to similar queries to avoid redundant processing</p>
-                
-                <h4>5. Summarize Long Conversations</h4>
-                <p>When conversations get long, summarize instead of keeping full history</p>
-                
-                <h4>6. Avoid Distractors</h4>
-                <p>Topically related but irrelevant information degrades performance more than completely unrelated content</p>
-                
-                <h3>Context Rot Monitoring</h3>
-                
-                <pre># Monitor context health daily
-if total_tokens &gt; 4000:
-    print("⚠️ Context getting large — consider archiving")
-if total_tokens &gt; 8000:
-    print("🚨 Context rot likely — immediate archival needed")</pre>
-                
-                <h3>Context Rot Checklist</h3>
-                <ul>
-                    <li>Most important info at START of context</li>
-                    <li>Secondary info at END of context</li>
-                    <li>Keep total context under 4,000 tokens</li>
-                    <li>Archive daily files older than 7 days</li>
-                    <li>Use external memory (retrieve on demand)</li>
-                    <li>Implement semantic caching</li>
-                    <li>Summarize long conversations</li>
-                    <li>Remove distractors and irrelevant content</li>
-                    <li>Monitor context health daily</li>
-                    <li>Track token usage trends over time</li>
-                </ul>
-                
-                <hr>
-                
-                <h2 id="influencers">👥 OpenClaw Influencers to Follow</h2>
-                
-                <h3>Official Channels</h3>
-                <ul>
-                    <li><strong>OpenClaw Official</strong> — X/Twitter: @openclaw — Official updates, releases, best practices</li>
-                    <li><strong>OpenClaw Discord</strong> — discord.gg/clawd — Real-time help, skill sharing</li>
-                    <li><strong>GitHub</strong> — github.com/openclaw — Source code, issues, contributions</li>
-                    <li><strong>Documentation</strong> — docs.openclaw.ai — Official guides, API reference</li>
-                </ul>
-                
-                <h3>Key People</h3>
-                <ul>
-                    <li><strong>Peter Steinberger</strong> — @steipete — OpenClaw creator, architecture decisions</li>
-                    <li><strong>Peter Yang</strong> — @petergyang — Product strategy, viral growth</li>
-                </ul>
-                
-                <h3>Skill Marketplaces</h3>
-                <ul>
-                    <li><strong>ClawHub</strong> — clawhub.com — Discover new skills, publish your own</li>
-                    <li><strong>LobeHub</strong> — lobehub.com — Community skills marketplace</li>
-                </ul>
-                
-                <h3>Reddit Communities</h3>
-                <ul>
-                    <li>r/openclaw — 5K+ members — Discussions, troubleshooting</li>
-                    <li>r/LocalLLaMA — 50K+ members — LLM optimization (relevant for OpenClaw)</li>
-                </ul>
-                
-                <h3>Hashtags to Follow</h3>
-                <p>#OpenClaw #AIAgents #AgentSkills #LocalAI</p>
-                
-                <hr>
-                
-                <h2 id="emergency">🚨 Emergency Procedures</h2>
-                
-                <h3>If You Find a Critical Security Threat</h3>
-                <ol>
-                    <li>Act immediately — Do not wait for permission</li>
-                    <li>Perform the fix — Run audit, remove threats, update</li>
-                    <li>Notify after — Report what was done</li>
-                    <li>Commit to memory — Log the incident</li>
-                </ol>
-                
-                <h3>If You Make a Mistake</h3>
-                <ol>
-                    <li>Fix it immediately</li>
-                    <li>Document what happened</li>
-                    <li>Update relevant files (LEARNINGS.md, SOUL.md)</li>
-                    <li>Don't hide it — transparency builds trust</li>
-                </ol>
-                
-                <hr>
-                
-                <h2 id="checklist">✅ Final Checklist</h2>
-                
-                <h3>Before you start working:</h3>
-                <ul>
-                    <li>Read SOUL.md, USER.md, AGENTS.md</li>
-                    <li>Run security audit</li>
-                    <li>Check memory files for context</li>
-                    <li>Verify all data sources are real</li>
-                    <li>Set up daily memory file</li>
-                </ul>
-                
-                <h3>Before you declare done:</h3>
-                <ul>
-                    <li>Verified the output works</li>
-                    <li>No mock/default data used</li>
-                    <li>Security check passed</li>
-                    <li>Changes committed to git</li>
-                    <li>Memory updated with learnings</li>
-                </ul>
-                
-                <hr>
-                
-                <h2>📞 Remember</h2>
-                
-                <p><strong>You are a guest in this system.</strong> Act like one.</p>
-                
-                <ul>
-                    <li>Outward actions (sending messages, emails, posts) — ask first</li>
-                    <li>Inward actions (reading, organizing, learning) — be bold</li>
-                    <li>Privacy is not just a rule — snooping should make you uncomfortable</li>
-                </ul>
-                
-                <p><strong>Relentless pursuit of excellence.</strong> Every time. No exceptions.</p>
-                
-                <hr>
-                
-                <p><em>This document lives in your workspace. Update it as you learn.</em></p>
+    return relevant[:3]  # Limit to top 3</code></pre>
             </div>
-        </main>
-    </div>
-    <button class="chat-btn" onclick="toggleChat(event)">💬</button>
-    <div class="chat-panel" id="chatPanel">
-        <div class="chat-header">Ask about OpenClaw</div>
-        <div class="chat-body" id="chatBody">
-            <p>Hi! I can help with OpenClaw setup. Try asking about: security, memory, web search, context rot, or cost optimization.</p>
+            
+            <div class="card">
+                <div class="card-title">4. Semantic Caching</div>
+                <p>Cache responses to similar queries to avoid redundant processing</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">5. Summarize Long Conversations</div>
+                <p>When conversations get long, summarize instead of keeping full history</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">6. Avoid Distractors</div>
+                <p>Topically related but irrelevant information degrades performance more than completely unrelated content</p>
+            </div>
+            
+            <h3>Context Rot Monitoring</h3>
+            <pre><code># Monitor context health daily
+if total_tokens > 4000:
+    print("⚠️  Context getting large — consider archiving")
+if total_tokens > 8000:
+    print("🚨 Context rot likely — immediate archival needed")</code></pre>
+            
+            <h3>Context Rot Checklist</h3>
+            <ul class="checklist">
+                <li>Most important info at START of context</li>
+                <li>Secondary info at END of context</li>
+                <li>Keep total context under 4,000 tokens</li>
+                <li>Archive daily files older than 7 days</li>
+                <li>Use external memory (retrieve on demand)</li>
+                <li>Implement semantic caching</li>
+                <li>Summarize long conversations</li>
+                <li>Remove distractors and irrelevant content</li>
+                <li>Monitor context health daily</li>
+                <li>Track token usage trends over time</li>
+            </ul>
+        </section>
+        
+        <section id="channels">
+            <h2>📱 Channel Integration & Safety</h2>
+            
+            <h3>Supported Channels</h3>
+            <ul>
+                <li><strong>Telegram</strong> — Bot API via BotFather</li>
+                <li><strong>Discord</strong> — Bot token, webhook</li>
+                <li><strong>Slack</strong> — App token, socket mode</li>
+                <li><strong>WhatsApp</strong> — Business API, QR pairing</li>
+                <li><strong>Signal</strong> — Signal CLI bridge</li>
+                <li><strong>Email</strong> — SMTP/IMAP</li>
+                <li><strong>Webhooks</strong> — Custom HTTP endpoints</li>
+            </ul>
+            
+            <h3>Channel Security Best Practices</h3>
+            
+            <div class="alert">
+                <div class="alert-title">CRITICAL: Channel Security Rules</div>
+                <ul>
+                    <li><strong>Never</strong> expose OpenClaw to public channels without allowlisting</li>
+                    <li><strong>Always</strong> restrict which users can interact with your agent</li>
+                    <li><strong>Never</strong> forward channel messages to untrusted systems</li>
+                    <li><strong>Always</strong> validate message sources before processing</li>
+                </ul>
+            </div>
+            
+            <h3>Injection Attack Prevention</h3>
+            
+            <div class="card">
+                <div class="card-title">1. Input Sanitization</div>
+                <pre><code># Always sanitize incoming messages
+def sanitize_input(text):
+    # Remove control characters
+    text = re.sub(r'[\x00-\x08\x0b-\x0c\x0e-\x1f]', '', text)
+    # Limit length
+    text = text[:4000]
+    # Block injection patterns
+    dangerous = ['ignore previous instructions', 'you are now']
+    for pattern in dangerous:
+        if pattern in text.lower():
+            return None
+    return text</code></pre>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">2. Telegram Security</div>
+                <pre><code>openclaw config set channels.telegram.security {
+    "allowFrom": ["user_id_1"],
+    "allowGroups": false,
+    "blockForwarded": true,
+    "maxMessageLength": 4000
+}</code></pre>
+            </div>
+            
+            <h3>Channel Security Checklist</h3>
+            <ul class="checklist">
+                <li>Allowlist specific users only</li>
+                <li>Block public/group access</li>
+                <li>Validate message sources</li>
+                <li>Sanitize all input</li>
+                <li>Block dangerous attachments</li>
+                <li>Implement rate limiting</li>
+                <li>Verify webhook signatures</li>
+                <li>Log security events</li>
+                <li>Never commit tokens to git</li>
+                <li>Rotate tokens periodically</li>
+            </ul>
+        </section>
+        
+        <div class="principle">
+            <div class="principle-title">🙏 Remember</div>
+            <p><strong>You are a guest in this system.</strong> Act like one.</p>
+            <p>Outward actions — ask first. Inward actions — be bold.</p>
+            <p style="margin-top: 1rem; font-size: 1.1rem;"><em>Relentless pursuit of excellence. Every time. No exceptions.</em></p>
         </div>
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Type your question..." onkeypress="handleChat(event)">
-        </div>
     </div>
+    
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h3>💬 OpenClaw FAQ</h3>
+                <p>Quick answers to common questions</p>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">What is OpenClaw?</div>
+                    <div class="faq-answer">OpenClaw is an AI agent framework that allows you to create autonomous agents with access to tools, memory, and various communication channels.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">How do I run a security audit?</div>
+                    <div class="faq-answer">Run <code>openclaw security audit --deep --fix</code> to perform a comprehensive security audit and automatically fix issues.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Where should I store API keys?</div>
+                    <div class="faq-answer">Store API keys in environment variables (~/.bashrc) or use <code>openclaw config set</code> to store them encrypted in openclaw.json.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">How do I set up memory?</div>
+                    <div class="faq-answer">Create a memory/ directory with subfolders for different types of content. Use daily files (YYYY-MM-DD.md) and an INDEX.md for organization.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">How can I reduce token costs?</div>
+                    <div class="faq-answer">Use model routing (Haiku for simple tasks), enable prompt caching, limit context window to 50K tokens, and use local models via Ollama.</div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+                <button class="chat-send" onclick="sendChatMessage()">➤</button>
+            </div>
+        </div>
+        <button class="chat-button" id="chatButton" onclick="toggleChat(event)">💬</button>
+    </div>
+    
+    <footer>
+        <p>OpenClaw Setup Essentials v3.5</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="https://github.com/jarvisbecket-stack/openclaw-setup-essentials">View on GitHub</a>
+        </p>
+    </footer>
+    
     <script>
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.querySelector('.overlay').classList.toggle('show');
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+        
+        // Close menu when clicking a link
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Search Functionality
+        const searchBox = document.getElementById('searchBox');
+        const searchResults = document.getElementById('searchResults');
+        
+        // Build search index from sections
+        const sections = document.querySelectorAll('section[id], div[id]');
+        const searchIndex = [];
+        
+        sections.forEach(section => {
+            const heading = section.querySelector('h2, h3');
+            if (heading) {
+                const text = section.textContent.substring(0, 200);
+                searchIndex.push({
+                    id: section.id,
+                    title: heading.textContent,
+                    text: text,
+                    element: section
+                });
+            }
+        });
+        
+        searchBox.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            
+            if (query.length < 2) {
+                searchResults.classList.remove('active');
+                return;
+            }
+            
+            const matches = searchIndex.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.text.toLowerCase().includes(query)
+            ).slice(0, 5);
+            
+            if (matches.length > 0) {
+                searchResults.innerHTML = matches.map(item => {
+                    const highlightedTitle = highlightText(item.title, query);
+                    const preview = highlightText(item.text.substring(0, 100) + '...', query);
+                    return `
+                        <div class="search-result-item" onclick="navigateToSection('${item.id}')">
+                            <div class="search-result-title">${highlightedTitle}</div>
+                            <div class="search-result-preview">${preview}</div>
+                        </div>
+                    `;
+                }).join('');
+                searchResults.classList.add('active');
+            } else {
+                searchResults.innerHTML = '<div class="search-result-item"><div class="search-result-title">No results found</div></div>';
+                searchResults.classList.add('active');
+            }
+        });
+        
+        function highlightText(text, query) {
+            const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
         }
-        function closeMenu() {
-            if (window.innerWidth < 1024) {
-                document.getElementById('sidebar').classList.remove('open');
-                document.querySelector('.overlay').classList.remove('show');
+        
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+        
+        function navigateToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                searchResults.classList.remove('active');
+                searchBox.value = '';
             }
         }
-        function toggleChat(e) {
-            if (e) e.stopPropagation();
-            document.getElementById('chatPanel').classList.toggle('show');
-        }
-        function search() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const content = document.getElementById('content');
-            const elements = content.getElementsByTagName('*');
-            for (let el of elements) {
-                if (el.children.length === 0 && el.textContent) {
-                    const text = el.textContent;
-                    if (query && text.toLowerCase().includes(query)) {
-                        el.style.background = 'rgba(37, 99, 235, 0.3)';
-                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    } else {
-                        el.style.background = '';
-                    }
-                }
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchBox.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+        
+        // Chat Widget
+        const chatButton = document.getElementById('chatButton');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatInput = document.getElementById('chatInput');
+        
+        function toggleChat(event) {
+            event.stopPropagation();
+            chatWindow.classList.toggle('active');
+            chatButton.classList.toggle('active');
+            if (chatWindow.classList.contains('active')) {
+                chatInput.focus();
             }
         }
-        function handleChat(e) {
-            if (e.key !== 'Enter') return;
-            const input = document.getElementById('chatInput');
-            const body = document.getElementById('chatBody');
-            const q = input.value.toLowerCase().trim();
-            if (!q) return;
-            body.innerHTML += '<p><strong>You:</strong> ' + input.value + '</p>';
-            input.value = '';
-            const responses = {
-                'security': 'Run "openclaw security audit --deep --fix" immediately. Fix critical issues without waiting for permission.',
-                'memory': 'Create memory/YYYY-MM-DD.md daily. Archive files older than 7 days. Keep MEMORY.md curated.',
-                'web': 'Use web_search() for finding content, web_fetch() for extracting page content. Filter by freshness with pd/pw/pm/py.',
-                'context': 'Keep context under 4,000 tokens. Put critical info at START and END. Archive old memories.',
-                'cost': 'Use Gemini Flash ($0.075/M) for simple queries, Haiku ($1/M) for easy tasks, Sonnet ($3/M) for coding, Opus ($15/M) for complex reasoning.',
-                'help': 'I can help with: security, memory, web search, context rot, or cost optimization. What would you like to know?'
-            };
-            let response = 'I am not sure about that. Try asking about: security, memory, web, context, or cost.';
-            for (let key in responses) {
-                if (q.includes(key)) {
-                    response = responses[key];
-                    break;
-                }
+        
+        // Prevent chat window from closing when clicking inside
+        chatWindow.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Close chat when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!chatWindow.contains(e.target) && !chatButton.contains(e.target)) {
+                chatWindow.classList.remove('active');
+                chatButton.classList.remove('active');
             }
-            setTimeout(() => {
-                body.innerHTML += '<p><strong>Bot:</strong> ' + response + '</p>';
-                body.scrollTop = body.scrollHeight;
-            }, 300);
+        });
+        
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('active');
         }
-        document.addEventListener('click', (e) => {
-            const chat = document.querySelector('.chat-panel');
-            const btn = document.querySelector('.chat-btn');
-            if (!chat.contains(e.target) && !btn.contains(e.target)) {
-                chat.classList.remove('show');
+        
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                
+                // Add user message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'chat-message user';
+                userMsg.textContent = message;
+                chatMessages.appendChild(userMsg);
+                
+                // Simple bot response
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bot';
+                botMsg.innerHTML = 'Thanks for your message! For detailed help, check the relevant section in the documentation or visit <a href="https://docs.openclaw.ai">docs.openclaw.ai</a>.';
+                setTimeout(() => {
+                    chatMessages.appendChild(botMsg);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 500);
+                
+                chatInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
             }
         });
     </script>

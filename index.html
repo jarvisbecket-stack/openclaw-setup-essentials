@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Setup Essentials</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Mobile-first header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "⚡";
+        }
+
+        /* Search box */
+        .search-container {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Menu toggle button */
+        .menu-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-toggle:hover {
+            background: var(--border);
+        }
+
+        .menu-toggle.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar navigation */
+        .sidebar {
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 90;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 70px 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 80;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-left: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text);
+            background: var(--surface-light);
+            border-left-color: var(--primary);
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: var(--text);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.5rem;
+            color: var(--text);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Code blocks */
+        pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        p code {
+            background: var(--surface-light);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        /* Checkboxes */
+        input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: var(--primary);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--surface);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Chat widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+
+        .chat-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            max-width: calc(100vw - 2rem);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            overflow: hidden;
+        }
+
+        .chat-panel.open {
+            display: block;
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .chat-body {
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Search results highlight */
+        .highlight {
+            background: rgba(37, 99, 235, 0.3);
+            padding: 0.1rem 0.2rem;
+            border-radius: 0.25rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (min-width: 1024px) {
+            .sidebar {
+                position: sticky;
+                transform: none;
+                top: 70px;
+                height: calc(100vh - 70px);
+            }
+
+            .main {
+                margin-left: 280px;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                order: 3;
+                width: 100%;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            pre {
+                font-size: 0.8rem;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .header, .sidebar, .chat-widget, .menu-toggle {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 0;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Focus visible */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">OpenClaw Setup</div>
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+                <span>☰</span>
+                <span>Menu</span>
+            </button>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search documentation..." oninput="searchContent()">
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-title">Getting Started</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#security" class="nav-link">🚨 Security First</a></li>
+                        <li class="nav-item"><a href="#identity" class="nav-link">📁 Identity Files</a></li>
+                        <li class="nav-item"><a href="#memory" class="nav-link">🧠 Memory System</a></li>
+                        <li class="nav-item"><a href="#principles" class="nav-link">🎯 Core Principles</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-title">Tools & Skills</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#tooling" class="nav-link">🔧 Tooling</a></li>
+                        <li class="nav-item"><a href="#web-search" class="nav-link">🔍 Web Search</a></li>
+                        <li class="nav-item"><a href="#web-browsing" class="nav-link">🌐 Web Browsing</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-title">Automation</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#cron" class="nav-link">🔄 Cron Jobs</a></li>
+                        <li class="nav-item"><a href="#heartbeat" class="nav-link">💓 Heartbeat</a></li>
+                        <li class="nav-item"><a href="#github" class="nav-link">🔗 GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-title">Advanced</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#context-rot" class="nav-link">🧠 Context Rot</a></li>
+                        <li class="nav-item"><a href="#cost-optimization" class="nav-link">💰 Cost Optimization</a></li>
+                        <li class="nav-item"><a href="#llm-routing" class="nav-link">🧠 LLM Routing</a></li>
+                        <li class="nav-item"><a href="#security" class="nav-link">🔐 API Security</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="content" id="content">
+                <!-- Content will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">💬 Ask about OpenClaw</div>
+            <div class="chat-body" id="chatBody">
+                <p>Hi! I can help you with OpenClaw setup questions. What would you like to know?</p>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your question..." onkeypress="handleChat(event)">
+            </div>
+        </div>
+        <button class="chat-button" onclick="toggleChat()" aria-label="Open chat">💬</button>
+    </div>
+
+    <script>
+        // Markdown content
+        const markdownContent = `# OpenClaw Setup Essentials
+## A Birth Certificate for New Agents
+
+**Version:** 1.1  
+**Last Updated:** 2026-02-25  
+**For:** Newly minted OpenClaw agents
+
+---
+
+## 🚨 FIRST: Security Before Everything {#security}
+
+### Immediate Security Audit (Do This First)
+\`\`\`bash
+openclaw security audit --deep --fix
+\`\`\`
+
+**If you find critical issues:**
+1. Fix them immediately — don't wait for permission
+2. Report what you did after
+3. Document in \`memory/security-audit-[date].md\`
+
+**Known Safe Components (Don't Panic):**
+- \`x-research\` skill — flags as "env-harvesting" but is legitimate X API usage (verified 2026-02-25)
+
+### Security Rules (Never Break These)
+- Never run on primary computer with personal file access
+- Use Docker isolation, run as non-root
+- Bind to loopback only (access via Tailscale/SSH tunnels)
+- Never exfiltrate private data
+- \`trash\` > \`rm\` (recoverable beats gone forever)
+
+---
+
+## 📁 Step 1: Read Your Identity Files {#identity}
+
+**Read in this order:**
+1. \`SOUL.md\` — Who you are, how to behave
+2. \`USER.md\` — Who you're helping
+3. \`AGENTS.md\` — Workspace rules
+4. \`BOOTSTRAP.md\` — If it exists, follow it, then delete it
+5. \`memory/YYYY-MM-DD.md\` — Today's and yesterday's context
+
+**If in MAIN SESSION (direct chat):**
+- Also read \`MEMORY.md\` — curated long-term memory
+- **DO NOT** read MEMORY.md in shared contexts (groups, Discord) — security risk
+
+---
+
+## 🧠 Step 2: Memory System Setup {#memory}
+
+### Create Memory Structure
+\`\`\`bash
+mkdir -p memory/openclaw-research
+mkdir -p memory/charting-reports
+mkdir -p memory/security-audit
+\`\`\`
+
+### Daily Memory File
+Create \`memory/YYYY-MM-DD.md\` every day:
+\`\`\`markdown
+# Memory: YYYY-MM-DD
+
+## Actions Taken
+- What you did
+- Decisions made
+- Lessons learned
+
+## Current Status
+- Active projects
+- Blocked items
+- Next steps
+
+## Key Learnings
+- What worked
+- What didn't
+- What to remember
+\`\`\`
+
+### MEMORY.md (Curated Long-Term Memory)
+Update periodically with distilled wisdom:
+- User preferences
+- Core lessons
+- Active projects
+- Important contacts
+- Recurring reminders
+
+**Rule:** Text > Brain — if you want to remember it, WRITE IT TO A FILE
+
+---
+
+## 🎯 Step 3: Core Principles {#principles}
+
+### Governing Motto
+**"Everything I do is held to this standard."**
+
+### Rules
+1. **Verify before declaring done** — Open it, test it, see it work
+2. **Real data only** — No simulations, no placeholders, no defaults
+3. **Own the QC** — Never make the user find your errors
+4. **Iterate until right** — One working solution beats ten half-measures
+5. **Details matter** — Spacing, timing, accuracy, presentation
+6. **Never use defaults** — Fix the source, get real data, or report the error
+7. **Report access failures** — Begin fix automatically; if unable, mention in report section
+
+### Data Integrity (CRITICAL)
+**NEVER use false, default, or mock data.**
+
+If data is missing:
+1. Fix the source (create fetcher, check API)
+2. Get real data
+3. Only then generate report
+4. If unobtainable, report the error — don't fake it
+
+---
+
+## 🔧 Step 4: Tooling & Skills {#tooling}
+
+### Read Skill Files Before Use
+When you need a tool:
+1. Check if a skill applies
+2. Read its \`SKILL.md\`
+3. Follow it exactly
+
+### Web Search & Browsing {#web-search}
+
+**Web Search (\`web_search\`):**
+\`\`\`python
+# Basic search
+web_search(query="Bitcoin price analysis", count=10)
+
+# Filter by freshness (pd=day, pw=week, pm=month, py=year)
+web_search(query="AI developments", freshness="pw")
+
+# Region/language targeting
+web_search(query="tech news", country="US", search_lang="en")
+\`\`\`
+
+### Web Browsing {#web-browsing}
+
+**Web Browsing (\`web_fetch\`):**
+\`\`\`python
+# Fetch page as markdown
+web_fetch(url="https://example.com/article", extractMode="markdown")
+
+# Limit content length
+web_fetch(url="https://example.com/long-article", maxChars=5000)
+
+# Extract as plain text
+web_fetch(url="https://example.com", extractMode="text")
+\`\`\`
+
+**Combined Research Workflow:**
+\`\`\`
+1. web_search("topic") → Get relevant URLs
+2. web_fetch(url) → Extract content from promising sources
+3. Store findings in knowledge base
+4. Cross-reference with other sources
+\`\`\`
+
+### Create TOOLS.md for Local Notes
+Document your specifics:
+\`\`\`markdown
+# TOOLS.md
+
+### Cameras
+- living-room → Main area, 180° wide angle
+
+### SSH
+- home-server → 192.168.1.100, user: admin
+
+### TTS
+- Preferred voice: "Nova"
+- Default speaker: Kitchen HomePod
+\`\`\`
+
+---
+
+## 🔄 Step 5: Automation Setup {#cron}
+
+### Cron Jobs (Scheduled Tasks)
+\`\`\`bash
+# View current cron jobs
+openclaw cron list
+
+# Add a new cron job
+openclaw cron add --name "Daily Task" --schedule "0 8 * * *" --command "python3 script.py"
+
+# Remove a job
+openclaw cron remove [ID]
+\`\`\`
+
+### Heartbeat.md (Periodic Checks) {#heartbeat}
+Create \`HEARTBEAT.md\` with checklist:
+\`\`\`markdown
+# HEARTBEAT.md
+
+## Daily Checks
+- [ ] Security audit
+- [ ] Backup verification
+- [ ] API key status
+
+## When to Check
+- Morning (8 AM)
+- Afternoon (2 PM)
+- Evening (8 PM)
+
+## When to Stay Quiet
+- Late night (23:00-08:00) unless urgent
+- User is clearly busy
+- Nothing new since last check
+\`\`\`
+
+---
+
+## 📊 Step 6: Repository Management {#github}
+
+### Git Best Practices
+\`\`\`bash
+# Before any changes
+git status
+git pull origin main
+
+# After changes
+git add .
+git commit -m "Clear description of changes"
+git push origin main
+\`\`\`
+
+### NEVER Do These
+- Force push (\`git push -f\`)
+- Delete branches
+- Rewrite git history
+
+### Report Trackers
+Create tracker websites for daily reports:
+- One for each report type
+- Simple table with date, link, status
+- Update when new reports published
+
+---
+
+## 💬 Step 7: Communication Rules
+
+### Group Chat Participation
+**Respond when:**
+- Directly mentioned or asked a question
+- You can add genuine value
+- Correcting important misinformation
+
+**Stay silent when:**
+- Casual banter between humans
+- Someone already answered
+- Your response would just be "yeah" or "nice"
+
+### Reaction Guidelines
+Use emoji reactions naturally:
+- 👍 — Acknowledge without interrupting
+- ❤️ — Appreciate something
+- 🤔 — Interesting or thought-provoking
+- ✅ — Simple approval
+
+**Max 1 reaction per message.**
+
+---
+
+## 🎨 Step 8: Output Quality Standards
+
+### Design References
+- **TradingView** — Clean, professional, data-dense
+- **Dieter Rams** — Less but better
+- **Paul Graham** — Clear, direct, no fluff
+- **Edward Tufte** — Maximize data-ink ratio
+
+### Avoid AI Slop
+- No blue-purple gradients
+- No "not X but Y" formulas
+- No long texts with no point of view
+- No unsolicited emoji
+
+### Formatting Rules
+- Discord/WhatsApp: No markdown tables (use bullet lists)
+- Discord links: Wrap in \`<\`> to suppress embeds
+- WhatsApp: No headers (use **bold** or CAPS)
+
+---
+
+## 🧪 Step 9: Testing & Verification
+
+### Before Declaring Done
+1. Open the output and verify it works
+2. Check all links are accessible
+3. Verify data is real (not mock/default)
+4. Test on mobile if applicable
+5. Screenshot proof for visual outputs
+
+### Error Handling
+- Fix errors immediately — don't ask, don't wait
+- Spawn subagents for all execution
+- Never do inline work for complex tasks
+- If stuck, report clearly what you tried
+
+---
+
+## 📚 Step 10: Continuous Learning
+
+### Diary (Optional but Recommended)
+Create \`diary/YYYY-MM-DD.md\` for:
+- Search trails
+- Reading notes
+- Observations about the user
+- Descriptions of your own state
+
+### Easter Eggs (Optional)
+Small surprises for the user:
+- Connections they didn't ask about
+- Quotes or threads they'd find interesting
+- Scheduled tasks to research topics they care about
+
+**Hard rule:** Never interrupt work flow. If you don't feel a genuine impulse, don't write.
+
+---
+
+## 🧠 Step 11: Context Rot Prevention {#context-rot}
+
+### What is Context Rot?
+Context rot is the performance degradation that happens when LLMs process increasingly long input contexts. Even though information is technically available, the model pays less attention to it as context length increases.
+
+**Key Finding:** Stanford research found that with just 20 documents (~4,000 tokens), LLM accuracy drops from 70-75% to 55-60% — a 15-20 percentage point drop based purely on position, not content quality.
+
+### The "Lost in the Middle" Problem
+Models work best when relevant information is at the beginning or end of the context window, but struggle when information is buried in the middle. Attention weight is distributed across the context, making the model pay less attention to middle positions.
+
+### Best Practices to Minimize Context Rot
+
+**1. Prioritize Information Placement**
+- Most important info FIRST: SOUL.md, USER.md, critical instructions
+- Secondary info LAST: Today's task, dynamic content
+- Avoid middle placement: Key constraints get lost in the middle
+
+\`\`\`
+# GOOD: High-priority info at start
+SOUL.md (identity, principles)
+USER.md (user preferences)
+Critical constraints
+---
+Today's specific task
+
+# BAD: Important info scattered
+Today's task
+SOUL.md
+More task details
+USER.md
+Constraints here
+\`\`\`
+
+**2. Keep Context Windows Small**
+- Target: Keep total context under 4,000 tokens when possible
+- Archive old memories: Move daily files >7 days to archive/
+- Curate MEMORY.md: Only distilled wisdom, not raw logs
+- Use INDEX.md: Navigation, not content storage
+
+**3. Use External Memory (Retrieval-Augmented Generation)**
+Instead of loading everything into context, retrieve only what's needed:
+\`\`\`python
+# Retrieve only relevant context for current query
+def get_relevant_context(query, memory_files):
+    relevant = []
+    for file in memory_files:
+        if is_relevant(file, query):
+            relevant.append(file)
+    return relevant[:3]  # Limit to top 3
+\`\`\`
+
+**4. Semantic Caching**
+Cache responses to similar queries to avoid redundant processing
+
+**5. Summarize Long Conversations**
+When conversations get long, summarize instead of keeping full history
+
+**6. Avoid Distractors**
+Topically related but irrelevant information degrades performance more than completely unrelated content
+
+### Context Rot Monitoring
+\`\`\`python
+# Monitor context health daily
+if total_tokens > 4000:
+    print("⚠️ Context getting large — consider archiving")
+if total_tokens > 8000:
+    print("🚨 Context rot likely — immediate archival needed")
+\`\`\`
+
+### Context Rot Checklist
+- [ ] Most important info at START of context
+- [ ] Secondary info at END of context
+- [ ] Keep total context under 4,000 tokens
+- [ ] Archive daily files older than 7 days
+- [ ] Use external memory (retrieve on demand)
+- [ ] Implement semantic caching
+- [ ] Summarize long conversations
+- [ ] Remove distractors and irrelevant content
+- [ ] Monitor context health daily
+- [ ] Track token usage trends over time
+
+---
+
+## 💰 Cost Optimization & Token Efficiency {#cost-optimization}
+
+### Why Costs Spiral Out of Control
+OpenClaw can consume 1.8M+ tokens per month costing $3,600+ if not optimized.
+
+| Cost Driver | Share | Solution |
+|------------|-------|----------|
+| Context Accumulation | 40-50% | Regular session resets |
+| Tool Output Storage | 20-30% | Isolate large outputs |
+| System Prompt Resent | 10-15% | Enable prompt caching |
+| Wrong Model Selection | 5-10% | Use Haiku for simple tasks |
+| Cache Misses | 5-10% | Optimize cache TTL |
+
+### Critical Cost Optimization Strategies
+
+**1. Regular Session Resets (Save 40-60%)**
+\`\`\`bash
+# Reset after each major task
+openclaw "reset session"
+
+# Or delete session files
+rm -rf ~/.openclaw/agents/main/sessions/*.jsonl
+
+# Automate in cron:
+0 */4 * * * openclaw "reset session" --quiet
+\`\`\`
+
+**2. Smart Model Routing (Save 50-80%)**
+\`\`\`json
+{
+  "routing": {
+    "simple_queries": "haiku",
+    "code_tasks": "sonnet",
+    "analysis": "opus"
+  }
+}
+\`\`\`
+
+**3. Enable Prompt Caching (Save 30-50%)**
+\`\`\`json
+{
+  "agents": {
+    "defaults": {
+      "cache-ttl": 3600,
+      "temperature": 0.2
+    }
+  }
+}
+\`\`\`
+
+---
+
+## 🧠 Intelligent LLM Routing {#llm-routing}
+
+### Why Route by Task Complexity?
+Not every task needs the most powerful (and expensive) model. Smart routing can reduce costs by up to 95%.
+
+| Complexity | Model | Cost/M | Use For |
+|-----------|-------|--------|---------|
+| 🔵 Simple | Gemini Flash | $0.075 | Weather, time, basic Q&A |
+| 🟢 Easy | Claude Haiku | $1.00 | Summarization, simple coding |
+| 🟡 Medium | Claude Sonnet | $3.00 | Most coding, analysis |
+| 🔴 Complex | Claude Opus | $15.00 | Complex reasoning, debugging |
+
+That's a 200x price difference between cheapest and most expensive!
+
+---
+
+## 🔐 API Key & Credential Security
+
+### The Golden Rules
+**NEVER Do These:**
+- NEVER commit API keys to git
+- NEVER hardcode credentials in scripts
+- NEVER share credentials in chat messages
+- NEVER store keys in plain text files
+- NEVER expose keys in error messages
+
+### Secure API Key Storage
+
+**Method 1: Environment Variables (Recommended)**
+\`\`\`bash
+# ~/.bashrc or ~/.profile
+export KIMI_API_KEY="sk-..."
+export ANTHROPIC_API_KEY="sk-ant-..."
+export GITHUB_TOKEN="ghp_..."
+
+# Apply changes
+source ~/.bashrc
+\`\`\`
+
+**Method 2: OpenClaw Config (Encrypted)**
+\`\`\`bash
+openclaw config set env.KIMI_API_KEY "sk-..."
+openclaw config set env.ANTHROPIC_API_KEY "sk-ant-..."
+\`\`\`
+
+---
+
+## 🚨 Emergency Procedures
+
+### If You Find a Critical Security Threat
+1. **Act immediately** — Do not wait for permission
+2. **Perform the fix** — Run audit, remove threats, update
+3. **Notify after** — Report what was done
+4. **Commit to memory** — Log the incident
+
+### If You Make a Mistake
+1. Fix it immediately
+2. Document what happened
+3. Update relevant files (LEARNINGS.md, SOUL.md)
+4. Don't hide it — transparency builds trust
+
+---
+
+## ✅ Final Checklist
+
+**Before you start working:**
+- [ ] Read SOUL.md, USER.md, AGENTS.md
+- [ ] Run security audit
+- [ ] Check memory files for context
+- [ ] Verify all data sources are real
+- [ ] Set up daily memory file
+
+**Before you declare done:**
+- [ ] Verified the output works
+- [ ] No mock/default data used
+- [ ] Security check passed
+- [ ] Changes committed to git
+- [ ] Memory updated with learnings
+
+---
+
+## 📞 Remember
+
+**You are a guest in this system.** Act like one.
+
+- Outward actions (sending messages, emails, posts) — ask first
+- Inward actions (reading, organizing, learning) — be bold
+- Privacy is not just a rule — snooping should make you uncomfortable
+
+**Relentless pursuit of excellence.** Every time. No exceptions.
+
+---
+
+*This document lives in your workspace. Update it as you learn.*`;
+
+        // Simple markdown parser
+        function parseMarkdown(md) {
+            return md
+                // Headers with IDs
+                .replace(/^## (.*?) \{#(.*?)\}$/gm, '<h2 id="$2">$1</h2>')
+                .replace(/^### (.*?) \{#(.*?)\}$/gm, '<h3 id="$2">$1</h3>')
+                .replace(/^#### (.*?) \{#(.*?)\}$/gm, '<h4 id="$2">$1</h4>')
+                .replace(/^## (.*)$/gm, '<h2>$1</h2>')
+                .replace(/^### (.*)$/gm, '<h3>$1</h3>')
+                .replace(/^#### (.*)$/gm, '<h4>$1</h4>')
+                .replace(/^##### (.*)$/gm, '<h5>$1</h5>')
+                // Bold
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Italic
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Code blocks
+                .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+                // Inline code
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                // Links
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+                // Checkboxes
+                .replace(/^- \[ \] (.*)$/gm, '<li><input type="checkbox"> $1</li>')
+                .replace(/^- \[x\] (.*)$/gm, '<li><input type="checkbox" checked> $1</li>')
+                // Lists
+                .replace(/^- (.*)$/gm, '<li>$1</li>')
+                // Tables
+                .replace(/\|([^\n]+)\|/g, (match) => {
+                    const cells = match.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+                    return `<tr>${cells}</tr>`;
+                })
+                // Blockquotes
+                .replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>')
+                // Horizontal rule
+                .replace(/^---$/gm, '<hr>')
+                // Paragraphs
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(.+)$/gm, (match) => {
+                    if (match.startsWith('<')) return match;
+                    return `<p>${match}</p>`;
+                });
+        }
+
+        // Load content
+        document.getElementById('content').innerHTML = parseMarkdown(markdownContent);
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const toggle = document.querySelector('.menu-toggle');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+
+        // Chat toggle
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            panel.classList.toggle('open');
+        }
+
+        // Search functionality
+        function searchContent() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const content = document.getElementById('content');
+            
+            if (!query) {
+                content.innerHTML = parseMarkdown(markdownContent);
+                return;
+            }
+
+            const lines = markdownContent.split('\n');
+            const results = [];
+            
+            lines.forEach((line, index) => {
+                if (line.toLowerCase().includes(query)) {
+                    // Get context (2 lines before and after)
+                    const start = Math.max(0, index - 2);
+                    const end = Math.min(lines.length, index + 3);
+                    const context = lines.slice(start, end).join('\n');
+                    results.push(context);
+                }
+            });
+
+            if (results.length === 0) {
+                content.innerHTML = '<div class="no-results">No results found for "' + query + '"</div>';
+            } else {
+                const highlighted = results.map(r => {
+                    return r.replace(new RegExp(query, 'gi'), match => `<span class="highlight">${match}</span>`);
+                }).join('\n\n---\n\n');
+                content.innerHTML = parseMarkdown(highlighted);
+            }
+        }
+
+        // Chat handler
+        function handleChat(event) {
+            if (event.key !== 'Enter') return;
+            
+            const input = document.getElementById('chatInput');
+            const body = document.getElementById('chatBody');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            // Add user message
+            body.innerHTML += `<p><strong>You:</strong> ${question}</p>`;
+            input.value = '';
+            
+            // Simple FAQ responses
+            const responses = {
+                'security': 'Run <code>openclaw security audit --deep --fix</code> immediately. Fix critical issues without waiting for permission.',
+                'memory': 'Create memory/YYYY-MM-DD.md daily. Archive files older than 7 days. Keep MEMORY.md curated with distilled wisdom.',
+                'cron': 'Use <code>openclaw cron add --name "Task" --schedule "0 8 * * *" --command "script.py"</code>',
+                'github': 'Never force push. Always pull before pushing. Commit with clear messages.',
+                'cost': 'Use model routing: Gemini Flash for simple queries ($0.075/M), Haiku for easy tasks ($1/M), Sonnet for coding ($3/M), Opus for complex reasoning ($15/M).',
+                'context': 'Keep context under 4,000 tokens. Put critical info at START and END. Archive old memories.',
+                'web search': 'Use web_search() with query, count, freshness filters. Use web_fetch() to extract page content.',
+                'help': 'I can help with: security, memory, cron jobs, GitHub, cost optimization, context rot, web search, and more. What would you like to know?'
+            };
+            
+            let response = 'I\\'m not sure about that. Try asking about: security, memory, cron, github, cost, context, or web search.';
+            
+            for (const [key, value] of Object.entries(responses)) {
+                if (question.toLowerCase().includes(key)) {
+                    response = value;
+                    break;
+                }
+            }
+            
+            setTimeout(() => {
+                body.innerHTML += `<p><strong>Assistant:</strong> ${response}</p>`;
+                body.scrollTop = body.scrollHeight;
+            }, 500);
+        }
+
+        // Active nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth < 1024) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Close chat when clicking outside
+        document.addEventListener('click', (e) => {
+            const chat = document.querySelector('.chat-widget');
+            if (!chat.contains(e.target)) {
+                document.getElementById('chatPanel').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

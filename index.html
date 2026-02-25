@@ -264,6 +264,7 @@
                         <li><a href="#testing" onclick="closeMenu()">🧪 Testing & Verification</a></li>
                         <li><a href="#learning" onclick="closeMenu()">📚 Continuous Learning</a></li>
                         <li><a href="#context-rot" onclick="closeMenu()">🧠 Context Rot Prevention</a></li>
+                        <li><a href="#influencers" onclick="closeMenu()">👥 Influencers</a></li>
                         <li><a href="#emergency" onclick="closeMenu()">🚨 Emergency Procedures</a></li>
                         <li><a href="#checklist" onclick="closeMenu()">✅ Final Checklist</a></li>
                     </ul>
@@ -703,6 +704,39 @@ if total_tokens &gt; 8000:
                 
                 <hr>
                 
+                <h2 id="influencers">👥 OpenClaw Influencers to Follow</h2>
+                
+                <h3>Official Channels</h3>
+                <ul>
+                    <li><strong>OpenClaw Official</strong> — X/Twitter: @openclaw — Official updates, releases, best practices</li>
+                    <li><strong>OpenClaw Discord</strong> — discord.gg/clawd — Real-time help, skill sharing</li>
+                    <li><strong>GitHub</strong> — github.com/openclaw — Source code, issues, contributions</li>
+                    <li><strong>Documentation</strong> — docs.openclaw.ai — Official guides, API reference</li>
+                </ul>
+                
+                <h3>Key People</h3>
+                <ul>
+                    <li><strong>Peter Steinberger</strong> — @steipete — OpenClaw creator, architecture decisions</li>
+                    <li><strong>Peter Yang</strong> — @petergyang — Product strategy, viral growth</li>
+                </ul>
+                
+                <h3>Skill Marketplaces</h3>
+                <ul>
+                    <li><strong>ClawHub</strong> — clawhub.com — Discover new skills, publish your own</li>
+                    <li><strong>LobeHub</strong> — lobehub.com — Community skills marketplace</li>
+                </ul>
+                
+                <h3>Reddit Communities</h3>
+                <ul>
+                    <li>r/openclaw — 5K+ members — Discussions, troubleshooting</li>
+                    <li>r/LocalLLaMA — 50K+ members — LLM optimization (relevant for OpenClaw)</li>
+                </ul>
+                
+                <h3>Hashtags to Follow</h3>
+                <p>#OpenClaw #AIAgents #AgentSkills #LocalAI</p>
+                
+                <hr>
+                
                 <h2 id="emergency">🚨 Emergency Procedures</h2>
                 
                 <h3>If You Find a Critical Security Threat</h3>
@@ -763,7 +797,7 @@ if total_tokens &gt; 8000:
             </div>
         </main>
     </div>
-    <button class="chat-btn" onclick="toggleChat()">💬</button>
+    <button class="chat-btn" onclick="toggleChat(event)">💬</button>
     <div class="chat-panel" id="chatPanel">
         <div class="chat-header">Ask about OpenClaw</div>
         <div class="chat-body" id="chatBody">
@@ -784,7 +818,8 @@ if total_tokens &gt; 8000:
                 document.querySelector('.overlay').classList.remove('show');
             }
         }
-        function toggleChat() {
+        function toggleChat(e) {
+            if (e) e.stopPropagation();
             document.getElementById('chatPanel').classList.toggle('show');
         }
         function search() {

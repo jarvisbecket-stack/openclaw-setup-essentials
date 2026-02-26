@@ -1784,3 +1784,187 @@ You are a guest in this system. Act like one.
 **Outward actions** — ask first. **Inward actions** — be bold.
 
 **Relentless pursuit of excellence. Every time. No exceptions.**
+
+---
+
+## 🎓 Lessons Learned from Real Setups
+
+### Lesson 1: Always Confirm User Identity First
+
+**What happened:** Initial setup used placeholder identity. Had to correct name, email, and timezone later.
+
+**Fix:** Always read USER.md first, confirm identity before proceeding.
+
+```bash
+# Check identity files exist and are accurate
+cat SOUL.md
+cat USER.md
+cat IDENTITY.md
+```
+
+**Impact:** Wrong timezone caused all cron jobs to be scheduled incorrectly. Required manual correction of:
+- All cron jobs (timezone parameter)
+- Memory files (timestamps)
+- Report generators (timestamp displays)
+- Environment variables (TZ)
+
+---
+
+### Lesson 2: GitHub Pages Must Be Enabled Manually
+
+**What happened:** Assumed GitHub Pages would auto-enable. Reports were generated but not web-accessible.
+
+**Fix:** User must manually enable Pages in each repo:
+
+```
+Settings → Pages → Source: Deploy from branch → Branch: main → / (root)
+```
+
+**Applies to:**
+- `btc-daily-report`
+- `btc-daily-report-tracker`
+- `openclaw-best-practices`
+- `openclaw-best-practices-tracker`
+
+**Lesson:** Don't assume infrastructure is ready. Verify URLs work with curl.
+
+---
+
+### Lesson 3: API Keys Need Testing Immediately
+
+**What happened:** Stored X API key but didn't test. Report generation failed on first run.
+
+**Fix:** Test every API key immediately after storage:
+
+```python
+# Quick test script
+curl -s "https://api.twitter.com/2/tweets/search/recent?query=test&max_results=10" \
+  -H "Authorization: Bearer $X_API_BEARER_TOKEN"
+```
+
+**Lesson:** Untested keys are broken keys. Test before declaring done.
+
+---
+
+### Lesson 4: Branch Names Vary (main vs master)
+
+**What happened:** Some repos use `main`, others use `master`. Push commands failed.
+
+**Fix:** Check branch name before pushing:
+
+```bash
+git branch --show-current  # Verify branch name
+git push origin main       # or master, depending on repo
+```
+
+**Common pattern:**
+- Newer repos: `main`
+- Older repos: `master`
+- Always check before pushing
+
+---
+
+### Lesson 5: Tracker Pages Need Auto-Updates
+
+**What happened:** Initially thought trackers were static. They need to auto-update with each report.
+
+**Solution:** Build tracker update into report generator:
+
+```python
+def update_tracker(self):
+    tracker_file = "../btc-daily-report-tracker/README.md"
+    # Parse existing table
+    # Insert new row after header
+    # Write back
+```
+
+**Lesson:** Archive/tracker pages are living documents, not static files.
+
+---
+
+### Lesson 6: Memory Search Requires OpenAI (Currently)
+
+**What happened:** Tried to use Google for embeddings. memory_search tool is hardcoded to OpenAI.
+
+**Workaround:** Manual file reading works fine for small memory sets (<100 files).
+
+**Future fix:** Add OpenAI billing or wait for Google embedding support.
+
+---
+
+### Lesson 7: Report Generators Should Be Self-Contained
+
+**What happened:** Initial report scripts had hardcoded paths. Broke when moved.
+
+**Fix:** Use relative paths and os.chdir():
+
+```python
+import os
+os.chdir("/root/.openclaw/workspace/btc-daily-report")
+# Now all paths are relative to repo
+```
+
+---
+
+### Lesson 8: QC Checklist Is Essential
+
+**Before declaring any setup "complete":**
+
+- [ ] Test all API keys
+- [ ] Verify GitHub Pages URLs return 200
+- [ ] Check cron job timezones
+- [ ] Confirm user identity in all files
+- [ ] Test report generation end-to-end
+- [ ] Verify tracker pages update
+- [ ] Check all commits pushed
+- [ ] Confirm backups complete
+
+---
+
+### Lesson 9: Document API Inventory
+
+**What happened:** Keys stored in multiple places, hard to track.
+
+**Solution:** Create API_INVENTORY.md:
+
+```markdown
+# API Key Inventory
+
+| Service | Key | Status | Use Case |
+|---------|-----|--------|----------|
+| X API | AAAA... | ✅ Active | Social sentiment |
+```
+
+**Keep updated as keys are added/rotated.**
+
+---
+
+### Lesson 10: Build Upon Existing Work
+
+**What happened:** Initial approach ignored existing report structure. Had to rebuild to match.
+
+**Fix:** Always examine existing files before building:
+
+```bash
+# Look at existing reports for structure
+ls -la btc-daily-report/
+cat btc-daily-report/index.html
+```
+
+**Lesson:** Don't reinvent. Improve.
+
+---
+
+## 🔄 Continuous Improvement
+
+**Update this file when you learn:**
+- New failure modes
+- Better workflows
+- User preferences
+- Tool limitations
+
+**Future bot setups will be faster and more accurate because of what you document here.**
+
+---
+
+*Document the journey. The next bot will thank you.*

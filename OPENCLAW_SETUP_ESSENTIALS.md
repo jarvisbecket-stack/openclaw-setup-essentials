@@ -1955,6 +1955,56 @@ os.chdir("/root/.openclaw/workspace/btc-daily-report")
 
 ---
 
+### Lesson 12: GitHub Pages Requires Manual Settings Configuration
+
+**What happened:** Created index.html files but tracker pages returned 404. Pages weren't accessible.
+
+**Root Cause:** GitHub Pages must be manually enabled in Settings for each repository.
+
+**Fix - Step by Step:**
+
+For each tracker repo, the user must:
+
+1. Go to https://github.com/jarvisbecket-stack/REPO_NAME/settings/pages
+2. Under "Source", select: **Deploy from a branch**
+3. Under "Branch", select: **main** (or master)
+4. Under "Folder", select: **/(root)**
+5. Click **Save**
+6. Wait 2-5 minutes for propagation
+7. Verify at https://jarvisbecket-stack.github.io/REPO_NAME/
+
+**Applies to:**
+- `btc-daily-report`
+- `btc-daily-report-tracker`
+- `openclaw-best-practices`
+- `openclaw-best-practices-tracker`
+
+**Cache Prevention (Add to HTML head):**
+```html
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+```
+
+**Auto-refresh (Add to HTML):**
+```html
+<script>
+    setInterval(function() {
+        window.location.reload(true);
+    }, 300000); // 5 minutes
+</script>
+```
+
+**Verification Command:**
+```bash
+curl -s -o /dev/null -w "%{http_code}" https://username.github.io/repo-name/
+# Should return 200, not 404
+```
+
+**Lesson:** Never assume infrastructure is ready. Verify with curl. Document setup steps clearly for the user.
+
+---
+
 ---
 
 ## 🔄 Continuous Improvement

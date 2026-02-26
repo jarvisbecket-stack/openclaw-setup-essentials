@@ -2005,6 +2005,56 @@ curl -s -o /dev/null -w "%{http_code}" https://username.github.io/repo-name/
 
 ---
 
+### Lesson 13: Use Inline SVG for Charts (No Dependencies)
+
+**What happened:** User wanted complex charts but pip install for matplotlib/pandas was blocked by system.
+
+**Solution:** Generate charts using inline SVG in HTML - pure Python, zero dependencies:
+
+```python
+def generate_svg_chart(self, data):
+    width, height = 800, 300
+    padding = 40
+    
+    # Calculate scales
+    x_scale = (width - 2 * padding) / (len(data) - 1)
+    y_scale = (height - 2 * padding) / (max_price - min_price)
+    
+    # Generate path
+    points = []
+    for i, price in enumerate(data):
+        x = padding + i * x_scale
+        y = height - padding - (price - min_price) * y_scale
+        points.append(f"{x},{y}")
+    
+    path_d = "M" + " L".join(points)
+    
+    # Return SVG string
+    svg = f'''<svg viewBox="0 0 {width} {height}" ...>
+        <path d="{path_d}" fill="none" stroke="#6366f1" stroke-width="2" />
+        <!-- Grid, labels, legend -->
+    </svg>'''
+    return svg
+```
+
+**Advantages:**
+- No pip install required
+- Scales to any screen size
+- Interactive (can add CSS/JS)
+- Lightweight (text, not binary images)
+- Works offline
+
+**Charts Implemented:**
+- 90-day price action with EMA 9/21
+- RSI indicator with overbought/oversold zones
+- Bollinger Bands
+- Support/Resistance levels
+- Technical indicator grid
+
+**Lesson:** When dependencies are blocked, use web-native formats (SVG, Canvas, CSS).
+
+---
+
 ---
 
 ## 🔄 Continuous Improvement

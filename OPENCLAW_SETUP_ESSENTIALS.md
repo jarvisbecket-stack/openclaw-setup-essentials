@@ -1939,19 +1939,21 @@ os.chdir("/root/.openclaw/workspace/btc-daily-report")
 
 ---
 
-### Lesson 10: Build Upon Existing Work
+### Lesson 11: Minimize Dependencies
 
-**What happened:** Initial approach ignored existing report structure. Had to rebuild to match.
+**What happened:** Asked user to install pandas, numpy, matplotlib. System blocked it with "externally-managed-environment" error.
 
-**Fix:** Always examine existing files before building:
+**Fix:** Rewrote report generator to use only Python standard library:
+- `urllib.request` instead of `requests`
+- `json` for parsing (no pandas needed)
+- `datetime` for timestamps
+- `os` for file operations
 
-```bash
-# Look at existing reports for structure
-ls -la btc-daily-report/
-cat btc-daily-report/index.html
-```
+**Result:** Zero dependencies. Report works on any Python 3.6+ system.
 
-**Lesson:** Don't reinvent. Improve.
+**Lesson:** Prefer standard library. Only add dependencies when absolutely necessary.
+
+---
 
 ---
 

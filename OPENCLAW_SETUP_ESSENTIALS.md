@@ -2055,6 +2055,52 @@ def generate_svg_chart(self, data):
 
 ---
 
+### Lesson 14: NEVER Use Mock/Simulated/Placeholder Data
+
+**CRITICAL RULE: Real Data Only**
+
+**What happened:** User explicitly commanded this rule after recognizing the importance of data integrity.
+
+**The Rule:**
+- ✅ Use real APIs, real databases, real sources
+- ✅ Test APIs immediately to confirm they work
+- ✅ Report failures explicitly when data is unavailable
+- ✅ Mark sections as "Data unavailable" rather than fabricate
+- ❌ NEVER generate fake data to "fill in" gaps
+- ❌ NEVER use placeholder values
+- ❌ NEVER simulate data that should be real
+
+**Example - Wrong:**
+```python
+# NEVER DO THIS
+if api_fails:
+    price = 50000  # placeholder
+    sentiment = 50  # fake neutral value
+```
+
+**Example - Right:**
+```python
+# CORRECT
+if api_fails:
+    price = None
+    report_section = "❌ Price data unavailable - API error"
+```
+
+**Why This Matters:**
+- Trust depends on accuracy
+- Fake data compounds errors
+- Better to admit missing data than mislead
+- Real data or explicit failure builds credibility
+
+**Enforcement:**
+- Self-check: "Is this data from a real source I verified?"
+- If no → Report failure, do not fabricate
+- Commit this to SOUL.md, MEMORY.md, and AGENTS.md
+
+**Lesson:** Data integrity is sacred. Real or nothing.
+
+---
+
 ---
 
 ## 🔄 Continuous Improvement
